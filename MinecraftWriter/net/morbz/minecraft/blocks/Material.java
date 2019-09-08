@@ -255,4 +255,5 @@ public class Material {
 	public static final Material JUNGLE_DOOR = new Material(195, 1); // √
 	public static final Material ACACIA_DOOR = new Material(196, 1); // √
 	public static final Material DARK_OAK_DOOR = new Material(197, 1); // √
+	public static final Material CONCRETE = new Material(251, 0);
 }

@@ -24,6 +24,8 @@ package net.morbz.minecraft.blocks;
 * SOFTWARE.
 */
 
+import net.morbz.minecraft.blocks.states.Facing5State;
+
 /**
  * The class for all blocks that don't have block data.
  * 
@@ -93,7 +95,9 @@ public enum SimpleBlock implements IBlock {
 	BIRCH_FENCE(Material.BIRCH_FENCE),
 	JUNGLE_FENCE(Material.JUNGLE_FENCE),
 	DARK_OAK_FENCE(Material.DARK_OAK_FENCE),
-	ACACIA_FENCE(Material.ACACIA_FENCE);
+	ACACIA_FENCE(Material.ACACIA_FENCE),
+	REDSTONE_WIRE(Material.REDSTONE_WIRE),
+	CONCRETE(Material.CONCRETE);
 	
 	private Material material;
 	private SimpleBlock(Material material) {
