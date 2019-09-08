@@ -1,8 +1,8 @@
 # comment
 # not parsed
 
-module RAM ($D_WIDTH, $A_WIDTH) begin
-    input data_in[$D_WIDTH]
+module RAM ($D_WIDTH, $A_WIDTH) begin # comment test 1
+    input data_in[$D_WIDTH] # comment # test # 2
     input w_addr[$A_WIDTH]
     input r_addr[$A_WIDTH]
     input write_en
@@ -13,7 +13,9 @@ module RAM ($D_WIDTH, $A_WIDTH) begin
     macro $REGS = $A_WIDTH * $A_WIDTH
     for $x[$A_WIDTH] in $REGS do
         reg data[$D_WIDTH]
-        net selected = addr_in = $x
+        net selected
+        assign selected = addr_in = $x
+
         assign data.clk = write_en & selected & clk
         assign data.in = data_in
         assign read = read | (data.out & selected)
@@ -36,7 +38,7 @@ root begin
 
     lever addr[4]
     lever data[8]
-    button write
+    lever write
     button clk
     lamp display[8]
 
