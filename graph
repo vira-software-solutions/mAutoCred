@@ -1,0 +1,15 @@
+gate:
+    type and
+    input1 net1
+    input2 net2
+    output1 net1
+
+gate:
+    type negate
+    input net2
+    output1 net3
+
+gate:
+    type or
+    input1 net1
+    input2 net3
