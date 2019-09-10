@@ -3,22 +3,35 @@ package net.therealvira.minecraft.gates;
 import net.morbz.minecraft.world.World;
 import net.therealvira.minecraft.blocks.Concrete;
 import net.therealvira.minecraft.blocks.SimpleBlockAdvanced;
+import net.therealvira.minecraft.blocks.Vector3;
 
 public class And extends Gate {
-    public And(Gate i1, Gate i2) {
-        super(new Gate[]{i1, i2});
+    public And() {
+        super( 2, 1);
     }
 
     @Override
-    public void place(int x, int y, int z, World world) {
-        placeRedstoneONBlock(x,y,z, world, Concrete.LIME_CONCRETE);
-        placeRedstoneONBlock(x+2,y,z, world, Concrete.LIME_CONCRETE);
+    protected void place(Vector3 position, World world) {
+        // Declare input and output locations
+        declareIOports(position);
 
-        placeTorchOnBlock(x+2,y,z+1, world, Concrete.LIME_CONCRETE);
-        placeRedstoneONBlock(x+1,y+1,z+1, world, Concrete.LIME_CONCRETE);
-        placeTorchOnBlock(x,y,z+1, world, Concrete.LIME_CONCRETE);
+        // Place blocks
+        placeRedstoneONBlock(position, world, Concrete.LIME_CONCRETE);
+        placeRedstoneONBlock(this.InputLocations[1], world, Concrete.LIME_CONCRETE);
 
-        world.setBlock(x+1,y,z+1, SimpleBlockAdvanced.REDSTONE_TORCH);
-        placeRedstoneONBlock(x+1,y,z+3, world, Concrete.LIME_CONCRETE);
+        placeTorchOnBlock(new Vector3(position.X+2,position.Y,position.Z+1), world, Concrete.LIME_CONCRETE);
+        placeRedstoneONBlock(new Vector3(position.X+1,position.Y+1,position.Z+1), world, Concrete.LIME_CONCRETE);
+        placeTorchOnBlock(new Vector3(position.X,position.Y,position.Z+1), world, Concrete.LIME_CONCRETE);
+
+        world.setBlock(new Vector3(position.X+1,position.Y,position.Z+1), SimpleBlockAdvanced.REDSTONE_TORCH);
+        placeRedstoneONBlock(this.OutputLocations[0], world, Concrete.LIME_CONCRETE);
+    }
+
+    @Override
+    protected void declareIOports(Vector3 position) {
+        this.InputLocations[0]=position;
+        this.InputLocations[1]=new Vector3(position.X+2,position.Y,position.Z);
+
+        this.OutputLocations[0]=new Vector3(position.X+1,position.Y,position.Z+3);
     }
 }

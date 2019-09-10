@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.therealvira.minecraft.blocks.Vector3;
 import org.jnbt.NBTOutputStream;
 
 import net.morbz.minecraft.blocks.IBlock;
@@ -90,20 +91,20 @@ public class World implements IBlockContainer {
 	 * @param z The Z-coordinate
 	 * @param block The block
 	 */
-	public void setBlock(int x, int y, int z, IBlock block) {
+	public void setBlock(Vector3 position, IBlock block) {
 		// Check for valid height
-		if(y > MAX_HEIGHT - 1 || y < 0) {
+		if(position.Y > MAX_HEIGHT - 1 || position.Y < 0) {
 			// Fail silently
 			return;
 		}
 		
 		// Get region
-		Region region = getRegion(x, z, true);
+		Region region = getRegion(position.X, position.Z, true);
 		
 		// Set block
-		int blockX = getRegionCoord(x);
-		int blockZ = getRegionCoord(z);
-		region.setBlock(blockX, y, blockZ, block);
+		int blockX = getRegionCoord(position.X);
+		int blockZ = getRegionCoord(position.Z);
+		region.setBlock(blockX, position.Y, blockZ, block);
 	}
 	
 	private Region getRegion(int x, int z, boolean create) {
@@ -139,15 +140,15 @@ public class World implements IBlockContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getSkyLight(int x, int y, int z) {
+	public byte getSkyLight(Vector3 position) {
 		// Get region
-		Region region = getRegion(x, z, false);
+		Region region = getRegion(position.X, position.Z, false);
 		
 		// Get light
 		if(region != null) {
-			int blockX = getRegionCoord(x);
-			int blockZ = getRegionCoord(z);
-			return region.getSkyLight(blockX, y, blockZ);
+			int blockX = getRegionCoord(position.X);
+			int blockZ = getRegionCoord(position.Z);
+			return region.getSkyLight(new Vector3(blockX, position.Y, blockZ));
 		}
 		return DEFAULT_SKY_LIGHT;
 	}
@@ -156,10 +157,10 @@ public class World implements IBlockContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getSkyLightFromParent(IBlockContainer child, int childX, int childY, int childZ) {
-		int x = Region.BLOCKS_PER_REGION_SIDE * ((Region)child).getX() + childX;
-		int z = Region.BLOCKS_PER_REGION_SIDE * ((Region)child).getZ() + childZ;
-		return getSkyLight(x, childY, z);
+	public byte getSkyLightFromParent(IBlockContainer child, Vector3 childPosition) {
+		int x = Region.BLOCKS_PER_REGION_SIDE * ((Region)child).getX() + childPosition.X;
+		int z = Region.BLOCKS_PER_REGION_SIDE * ((Region)child).getZ() + childPosition.Z;
+		return getSkyLight(new Vector3(x, childPosition.Y, z));
 	}
 	
 	/**
@@ -171,7 +172,13 @@ public class World implements IBlockContainer {
 			region.spreadSkyLight(light);
 		}
 	}
-	
+
+	@Override
+	public IBlock detectSurroundingBlocks(Vector3 position) {
+		// TODO
+		return null;
+	}
+
 	/**
 	 * Saves the world in a new directory within the /worlds/ directory. The name of the directory 
 	 * is the level name. When there are multiple worlds with the same name they will be numbered.

@@ -9,9 +9,8 @@ import net.morbz.minecraft.level.IGenerator;
 import net.morbz.minecraft.level.Level;
 import net.morbz.minecraft.world.DefaultLayers;
 import net.morbz.minecraft.world.World;
-import net.therealvira.minecraft.gates.And;
-import net.therealvira.minecraft.gates.Negate;
-import net.therealvira.minecraft.gates.Or;
+import net.therealvira.minecraft.blocks.Vector3;
+import net.therealvira.minecraft.gates.*;
 import org.apache.commons.io.FileUtils;
 
 public class Main {
@@ -31,24 +30,31 @@ public class Main {
 
         World world = new World(level, layers);
 
-        (new Or(null, null)).place(0,2,0, world);
+        var n = new Negate().initialize(new Vector3(0,2,0), world);
+        var o = new Or().initialize(new Vector3(5,2,5), world);
 
+        var ioConnections = new IOcomConnection[]{
+                new IOcomConnection(o, 1, n, 0)
+        };
+
+        RedstoneConnector.InitializeConnections(
+                ioConnections,
+                world);
 
         /// DEBUG!!
-
-        final File ORIGIN = new File("E:\\Minecraft\\mAutoCred\\worlds\\test");
-        final File MASTER = new File("C:\\Users\\Vira\\AppData\\Roaming\\.minecraft\\saves\\test");
-        if (ORIGIN.exists()){
-            FileUtils.deleteDirectory(ORIGIN);
+        final File SOURCE = new File("E:\\Minecraft\\mAutoCred\\worlds\\test");
+        final File DESTINATION = new File("C:\\Users\\Vira\\AppData\\Roaming\\.minecraft\\saves\\test");
+        if (SOURCE.exists()){
+            FileUtils.deleteDirectory(SOURCE);
         }
 
-        if (MASTER.exists()){
-            FileUtils.deleteDirectory(MASTER);
+        if (DESTINATION.exists()){
+            FileUtils.deleteDirectory(DESTINATION);
         }
 
         // Everything's set up so we're going to save the world.
         world.save();
 
-        FileUtils.copyDirectory(ORIGIN, MASTER);
+        FileUtils.copyDirectory(SOURCE, DESTINATION);
     }
 }

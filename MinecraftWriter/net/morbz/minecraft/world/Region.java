@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 
 import net.morbz.minecraft.blocks.IBlock;
+import net.therealvira.minecraft.blocks.Vector3;
 import net.unknown.RegionFile;
 
 import org.jnbt.NBTOutputStream;
@@ -105,14 +106,14 @@ public class Region implements IBlockContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getSkyLight(int x, int y, int z) {
+	public byte getSkyLight(Vector3 position) {
 		// Get chunk 
-		Chunk chunk = getChunk(x, z, false);
+		Chunk chunk = getChunk(position.X, position.Z, false);
 		
 		if(chunk != null) {
-			int blockX = x % Chunk.BLOCKS_PER_CHUNK_SIDE;
-			int blockZ = z % Chunk.BLOCKS_PER_CHUNK_SIDE;
-			byte light = chunk.getSkyLight(blockX, y, blockZ);
+			int blockX = position.X % Chunk.BLOCKS_PER_CHUNK_SIDE;
+			int blockZ = position.Z % Chunk.BLOCKS_PER_CHUNK_SIDE;
+			byte light = chunk.getSkyLight(new Vector3(blockX, position.Y, blockZ));
 			return light;
 		}
 		return World.DEFAULT_SKY_LIGHT;
@@ -122,16 +123,16 @@ public class Region implements IBlockContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getSkyLightFromParent(IBlockContainer child, int childX, int childY, int childZ) {
-		int x = ((Chunk)child).getX() * Chunk.BLOCKS_PER_CHUNK_SIDE + childX;
-		int z = ((Chunk)child).getZ() * Chunk.BLOCKS_PER_CHUNK_SIDE + childZ;
+	public byte getSkyLightFromParent(IBlockContainer child, Vector3 childPosition) {
+		int x = ((Chunk)child).getX() * Chunk.BLOCKS_PER_CHUNK_SIDE + childPosition.X;
+		int z = ((Chunk)child).getZ() * Chunk.BLOCKS_PER_CHUNK_SIDE + childPosition.Z;
 		
 		// Same region?
 		if(x >= 0 && x < BLOCKS_PER_REGION_SIDE && z >= 0 && z < BLOCKS_PER_REGION_SIDE) {
-			return getSkyLight(x, childY, z);
+			return getSkyLight(new Vector3(x, childPosition.Y, z));
 		} else {
 			// Pass to parent
-			return parent.getSkyLightFromParent(this, x, childY, z);
+			return parent.getSkyLightFromParent(this, new Vector3(x, childPosition.Y, z));
 		}
 	}
 	
@@ -149,7 +150,13 @@ public class Region implements IBlockContainer {
 			}
 		}
 	}
-	
+
+	@Override
+	public IBlock detectSurroundingBlocks(Vector3 position) {
+		// TODO
+		return null;
+	}
+
 	/**
 	 * Adds the sky light. Starts from top the top of each column and sets sky light to full, up to 
 	 * the first non-transparent block.

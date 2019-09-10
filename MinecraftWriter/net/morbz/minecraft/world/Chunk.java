@@ -31,6 +31,7 @@ import net.morbz.minecraft.tags.CompoundTagFactory;
 import net.morbz.minecraft.tags.ITagProvider;
 import net.morbz.minecraft.tags.ListTagFactory;
 
+import net.therealvira.minecraft.blocks.Vector3;
 import org.jnbt.ByteTag;
 import org.jnbt.CompoundTag;
 import org.jnbt.IntArrayTag;
@@ -129,13 +130,13 @@ public class Chunk implements ITagProvider, IBlockContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getSkyLight(int x, int y, int z) {
+	public byte getSkyLight(Vector3 position) {
 		// Get section
-		Section section = getSection(y, false);
+		Section section = getSection(position.Y, false);
 		
 		if(section != null) {
-			int blockY = y % Section.SECTION_HEIGHT;
-			byte light = section.getSkyLight(x, blockY, z);
+			int blockY = position.Y % Section.SECTION_HEIGHT;
+			byte light = section.getSkyLight(new Vector3(position.X, blockY, position.Z));
 			return light;
 		}
 		return World.DEFAULT_SKY_LIGHT;
@@ -155,9 +156,9 @@ public class Chunk implements ITagProvider, IBlockContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getSkyLightFromParent(IBlockContainer child, int childX, int childY, int childZ) {
+	public byte getSkyLightFromParent(IBlockContainer child, Vector3 childPosition) {
 		// Get total Y
-		int y = ((Section)child).getY() * Section.SECTION_HEIGHT + childY;
+		int y = ((Section)child).getY() * Section.SECTION_HEIGHT + childPosition.Y;
 		if(y >= World.MAX_HEIGHT) {
 			return World.DEFAULT_SKY_LIGHT;
 		}
@@ -166,12 +167,12 @@ public class Chunk implements ITagProvider, IBlockContainer {
 		}
 		
 		// Which chunk?
-		if(childX >= 0 && childX < BLOCKS_PER_CHUNK_SIDE && childZ >= 0 && childZ < BLOCKS_PER_CHUNK_SIDE) {
+		if(childPosition.X >= 0 && childPosition.X < BLOCKS_PER_CHUNK_SIDE && childPosition.Z >= 0 && childPosition.Z < BLOCKS_PER_CHUNK_SIDE) {
 			// Same chunk
-			return getSkyLight(childX, y, childZ);
+			return getSkyLight(new Vector3(childPosition.X, y, childPosition.Z));
 		} else {
 			// Different chunk
-			return parent.getSkyLightFromParent(this, childX, y, childZ);
+			return parent.getSkyLightFromParent(this, new Vector3(childPosition.X, y, childPosition.Z));
 		}
 	}
 	
@@ -186,7 +187,12 @@ public class Chunk implements ITagProvider, IBlockContainer {
 			}
 		}
 	}
-	
+
+	@Override
+	public IBlock detectSurroundingBlocks(Vector3 position) {
+		return null;
+	}
+
 	/**
 	 * Adds the sky light. Starts from top the top of each column and sets sky light to full, up to 
 	 * the first non-transparent block.

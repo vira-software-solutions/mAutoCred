@@ -28,6 +28,7 @@ import net.morbz.minecraft.blocks.IBlock;
 import net.morbz.minecraft.tags.CompoundTagFactory;
 import net.morbz.minecraft.tags.ITagProvider;
 
+import net.therealvira.minecraft.blocks.Vector3;
 import org.jnbt.ByteArrayTag;
 import org.jnbt.ByteTag;
 import org.jnbt.Tag;
@@ -123,8 +124,8 @@ public class Section implements ITagProvider, IBlockContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getSkyLight(int x, int y, int z) {
-		int index = getBlockIndex(x, y, z);
+	public byte getSkyLight(Vector3 position) {
+		int index = getBlockIndex(position.X, position.Y, position.Z);
 		byte light = skyLight.get(index);
 		return light;
 	}
@@ -146,13 +147,13 @@ public class Section implements ITagProvider, IBlockContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getSkyLightFromParent(IBlockContainer child, int x, int y, int z) {
-		if(isInBounds(x, y, z)) {
+	public byte getSkyLightFromParent(IBlockContainer child, Vector3 childPosition) {
+		if(isInBounds(childPosition.X, childPosition.Y, childPosition.Z)) {
 			// Block is within section bounds
-			return getSkyLight(x, y, z);
+			return getSkyLight(childPosition);
 		} else {
 			// Pass to parent
-			return parent.getSkyLightFromParent(this, x, y, z);
+			return parent.getSkyLightFromParent(this, childPosition);
 		}
 	}
 	
@@ -165,7 +166,7 @@ public class Section implements ITagProvider, IBlockContainer {
 		for(int x = -1; x <= Chunk.BLOCKS_PER_CHUNK_SIDE; x++) {
 			for(int y = -1; y <= SECTION_HEIGHT; y++) {
 				for(int z = -1; z <= Chunk.BLOCKS_PER_CHUNK_SIDE; z++) {
-					byte currentLight = getSkyLightFromParent(null, x, y, z);
+					byte currentLight = getSkyLightFromParent(null, new Vector3(x, y, z));
 					if(currentLight == light) {
 						spreadSkyLightForBlock(x, y, z, light);
 					}
@@ -173,7 +174,12 @@ public class Section implements ITagProvider, IBlockContainer {
 			}
 		}
 	}
-	
+
+	@Override
+	public IBlock detectSurroundingBlocks(Vector3 position) {
+		return null;
+	}
+
 	/**
 	 * Spreads the light from the given block. All adjacent blocks that have a lower light level
 	 * than the given will be updated.
@@ -209,7 +215,7 @@ public class Section implements ITagProvider, IBlockContainer {
 		}
 		
 		// Update is current light is lower
-		if(getSkyLight(x, y, z) < light) {
+		if(getSkyLight(new Vector3(x, y, z)) < light) {
 			setSkyLight(x, y, z, light);
 		}
 	}
