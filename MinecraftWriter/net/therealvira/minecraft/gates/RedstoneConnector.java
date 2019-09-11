@@ -1,31 +1,23 @@
 package net.therealvira.minecraft.gates;
 
 import net.morbz.minecraft.blocks.IBlock;
-import net.morbz.minecraft.blocks.Material;
 import net.morbz.minecraft.world.World;
 import net.therealvira.minecraft.blocks.Concrete;
 import net.therealvira.minecraft.blocks.Vector3;
 
 public final class RedstoneConnector {
+
+    private static final IBlock CONNECTION_BLOCK_SHEME = Concrete.YELLOW_CONCRETE;
+
     private RedstoneConnector() {
 
     }
 
-    public static void InitializeConnections(IOcomConnection[] COMs, World world) {
-        for (IOcomConnection com :
-                COMs) {
-            PlaceConnection(com.O.OutputLocations[com.Ocom],
-                    com.I.InputLocations[com.Icom],
-                    Concrete.YELLOW_CONCRETE,
-                    world);
-        }
-    }
-
-    public static void PlaceConnection(Vector3 from, Vector3 to, IBlock block, World world) {
+    public static void PlaceConnection(Vector3 from, Vector3 to, World world) {
         var step = CalculateConnectionStep(from, to);
         while (!step.equals(Vector3.ZERO)) {
             from = Vector3.Add(from, step);
-            Gate.placeRedstoneONBlock(from, world, block);
+            Gate.placeRedstoneONBlock(from, world, CONNECTION_BLOCK_SHEME);
             step = CalculateConnectionStep(from, to);
         }
     }

@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import net.morbz.minecraft.blocks.Material;
 import net.morbz.minecraft.level.FlatGenerator;
@@ -30,16 +29,8 @@ public class Main {
 
         World world = new World(level, layers);
 
-        var n = new Negate().initialize(new Vector3(0,2,0), world);
-        var o = new Or().initialize(new Vector3(5,2,5), world);
-
-        var ioConnections = new IOcomConnection[]{
-                new IOcomConnection(o, 1, n, 0)
-        };
-
-        RedstoneConnector.InitializeConnections(
-                ioConnections,
-                world);
+        var n = new Negate(null).initialize(new Vector3(0,2,0), world);
+        var o = new Or(null, new NETcon(n, 0)).initialize(new Vector3(5,2,5), world);
 
         /// DEBUG!!
         final File SOURCE = new File("E:\\Minecraft\\mAutoCred\\worlds\\test");

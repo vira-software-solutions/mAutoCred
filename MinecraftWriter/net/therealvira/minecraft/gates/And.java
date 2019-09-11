@@ -6,25 +6,21 @@ import net.therealvira.minecraft.blocks.SimpleBlockAdvanced;
 import net.therealvira.minecraft.blocks.Vector3;
 
 public class And extends Gate {
-    public And() {
-        super( 2, 1);
+    public And(NETcon net1, NETcon net2) {
+        super(new NETcon[]{net1, net2}, 1, Concrete.LIME_CONCRETE);
     }
 
     @Override
     protected void place(Vector3 position, World world) {
-        // Declare input and output locations
-        declareIOports(position);
+        placeRedstoneONBlock(position, world, this.BlockSheme);
+        placeRedstoneONBlock(this.InputLocations[1], world, this.BlockSheme);
 
-        // Place blocks
-        placeRedstoneONBlock(position, world, Concrete.LIME_CONCRETE);
-        placeRedstoneONBlock(this.InputLocations[1], world, Concrete.LIME_CONCRETE);
-
-        placeTorchOnBlock(new Vector3(position.X+2,position.Y,position.Z+1), world, Concrete.LIME_CONCRETE);
-        placeRedstoneONBlock(new Vector3(position.X+1,position.Y+1,position.Z+1), world, Concrete.LIME_CONCRETE);
-        placeTorchOnBlock(new Vector3(position.X,position.Y,position.Z+1), world, Concrete.LIME_CONCRETE);
+        placeTorchOnBlock(new Vector3(position.X+2,position.Y,position.Z+1), world, this.BlockSheme);
+        placeRedstoneONBlock(new Vector3(position.X+1,position.Y+1,position.Z+1), world, this.BlockSheme);
+        placeTorchOnBlock(new Vector3(position.X,position.Y,position.Z+1), world, this.BlockSheme);
 
         world.setBlock(new Vector3(position.X+1,position.Y,position.Z+1), SimpleBlockAdvanced.REDSTONE_TORCH);
-        placeRedstoneONBlock(this.OutputLocations[0], world, Concrete.LIME_CONCRETE);
+        placeRedstoneONBlock(this.OutputLocations[0], world, this.BlockSheme);
     }
 
     @Override
