@@ -100,8 +100,8 @@ public class SpecialRailBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)material.getValue();
+	public int getBlockId() {
+		return material.getValue();
 	}
 	
 	/**

@@ -25,12 +25,14 @@ package net.morbz.minecraft.world;
 */
 
 import net.morbz.minecraft.blocks.IBlock;
+import net.morbz.minecraft.blocks.Material;
 import net.morbz.minecraft.tags.CompoundTagFactory;
 import net.morbz.minecraft.tags.ITagProvider;
 
 import net.therealvira.minecraft.blocks.Vector3;
 import org.jnbt.ByteArrayTag;
 import org.jnbt.ByteTag;
+import org.jnbt.IntArrayTag;
 import org.jnbt.Tag;
 
 /**
@@ -50,7 +52,7 @@ public class Section implements ITagProvider, IBlockContainer {
 	public static final int BLOCKS_PER_SECTION = 
 		Chunk.BLOCKS_PER_CHUNK_SIDE * Chunk.BLOCKS_PER_CHUNK_SIDE * SECTION_HEIGHT;
 	
-	private byte[] blockIds = new byte[BLOCKS_PER_SECTION];
+	private int[] blockIds = new int[BLOCKS_PER_SECTION];
 	private byte[] transparency = new byte[BLOCKS_PER_SECTION];
 	private NibbleArray blockData = new NibbleArray(BLOCKS_PER_SECTION);
 	private NibbleArray skyLight = new NibbleArray(BLOCKS_PER_SECTION);
@@ -176,8 +178,8 @@ public class Section implements ITagProvider, IBlockContainer {
 	}
 
 	@Override
-	public IBlock detectSurroundingBlocks(Vector3 position) {
-		return null;
+	public IBlock detectBlockAtPosition(Vector3 position) {
+		return IBlock.getBlockById(blockIds[getBlockIndex(position)]);
 	}
 
 	/**
@@ -232,7 +234,11 @@ public class Section implements ITagProvider, IBlockContainer {
 		}
 		return true;
 	}
-	
+
+	private int getBlockIndex(Vector3 position){
+		return getBlockIndex(position.X, position.Y, position.Z);
+	}
+
 	private int getBlockIndex(int x, int y, int z) {
 		int index = 0;
 		index += y * Chunk.BLOCKS_PER_CHUNK_SIDE * Chunk.BLOCKS_PER_CHUNK_SIDE;
@@ -276,7 +282,7 @@ public class Section implements ITagProvider, IBlockContainer {
 	public Tag getTag() {
 		// Create tag
 		CompoundTagFactory factory = new CompoundTagFactory("");
-		factory.set(new ByteArrayTag("Blocks", blockIds));
+		factory.set(new IntArrayTag("Blocks", blockIds));
 		factory.set(new ByteArrayTag("Data", blockData.getBytes()));
 		factory.set(new ByteArrayTag("BlockLight", new NibbleArray(BLOCKS_PER_SECTION).getBytes()));
 		factory.set(new ByteArrayTag("SkyLight", skyLight.getBytes()));

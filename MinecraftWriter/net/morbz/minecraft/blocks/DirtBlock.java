@@ -44,8 +44,8 @@ public enum DirtBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)Material.DIRT.getValue();
+	public int getBlockId() {
+		return Material.DIRT.getValue();
 	}
 	
 	/**

@@ -48,8 +48,8 @@ public enum StoneBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)Material.STONE.getValue();
+	public int getBlockId() {
+		return Material.STONE.getValue();
 	}
 	
 	/**

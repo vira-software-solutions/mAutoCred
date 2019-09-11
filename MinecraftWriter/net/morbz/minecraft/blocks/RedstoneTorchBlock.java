@@ -50,10 +50,10 @@ public class RedstoneTorchBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
+	public int getBlockId() {
 		// Is active?
 		Material material = isActive ? Material.REDSTONE_TORCH : Material.UNLIT_REDSTONE_TORCH;
-		return (byte)material.getValue();
+		return material.getValue();
 	}
 	
 	/**

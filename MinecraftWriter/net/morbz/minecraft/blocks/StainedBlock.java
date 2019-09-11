@@ -48,8 +48,8 @@ public class StainedBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)material.material.getValue();
+	public int getBlockId() {
+		return material.material.getValue();
 	}
 	
 	/**

@@ -24,6 +24,12 @@ package net.morbz.minecraft.blocks;
 * SOFTWARE.
 */
 
+import net.therealvira.minecraft.Helper;
+import net.therealvira.minecraft.blocks.SimpleBlockAdvanced;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 /**
  * Interface for all blocks.
  * 
@@ -35,7 +41,7 @@ public interface IBlock {
 	 * 
 	 * @return The block ID
 	 */
-	public byte getBlockId();
+	public int getBlockId();
 	
 	/**
 	 * Returns the block data. It can hold additional information about the block depending on the 
@@ -52,4 +58,27 @@ public interface IBlock {
 	 * @return The transparency level
 	 */
 	public int getTransparency();
+
+	static HashMap<Integer, IBlock> AvailableBlocks = new HashMap<Integer, IBlock>();
+
+	public static IBlock getBlockById(int id) {
+		if(AvailableBlocks.isEmpty()){
+			InitializeBlocks();
+		}
+
+		return AvailableBlocks.getOrDefault(id, null);
+	}
+
+	private static void InitializeBlocks(){
+		var simpleBlocks = (IBlock[])SimpleBlock.class.getEnumConstants();
+		var advancedBlocks = (IBlock[])SimpleBlockAdvanced.class.getEnumConstants();
+
+		for (IBlock block : simpleBlocks) {
+			AvailableBlocks.put(block.getBlockId(), block);
+		}
+
+		for (IBlock block : advancedBlocks) {
+			AvailableBlocks.put(block.getBlockId(), block);
+		}
+	}
 }

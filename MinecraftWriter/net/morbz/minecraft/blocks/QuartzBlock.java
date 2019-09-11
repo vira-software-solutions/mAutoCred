@@ -57,8 +57,8 @@ public class QuartzBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)Material.QUARTZ_BLOCK.getValue();
+	public int getBlockId() {
+		return Material.QUARTZ_BLOCK.getValue();
 	}
 	
 	/**

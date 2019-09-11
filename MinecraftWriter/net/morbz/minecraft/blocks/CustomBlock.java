@@ -50,8 +50,8 @@ public class CustomBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)blockId;
+	public int getBlockId() {
+		return blockId;
 	}
 	
 	/**

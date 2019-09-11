@@ -86,9 +86,7 @@ public class World implements IBlockContainer {
 	/**
 	 * Sets a block at the given world position.
 	 * 
-	 * @param x The X-coordinate
-	 * @param y The Y-coordinate (Height, Must be between 0 and 255)
-	 * @param z The Z-coordinate
+	 * @param position The position
 	 * @param block The block
 	 */
 	public void setBlock(Vector3 position, IBlock block) {
@@ -174,9 +172,17 @@ public class World implements IBlockContainer {
 	}
 
 	@Override
-	public IBlock detectSurroundingBlocks(Vector3 position) {
-		// TODO
-		return null;
+	public IBlock detectBlockAtPosition(Vector3 position) {
+		// Check for valid height
+		if(position.Y > MAX_HEIGHT - 1 || position.Y < 0) {
+			// Fail silently
+			return null;
+		}
+
+		// Get region
+		Region region = getRegion(position.X, position.Z, false);
+
+		return region==null?null:region.detectBlockAtPosition(position);
 	}
 
 	/**

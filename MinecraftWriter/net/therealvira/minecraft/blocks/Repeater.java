@@ -16,9 +16,9 @@ public class Repeater implements IBlock {
     }
 
     @Override
-    public byte getBlockId() {
+    public int getBlockId() {
         Material material = powered?Material.POWERED_REPEATER:Material.UNPOWERED_REPEATER;
-        return (byte)material.getValue();
+        return material.getValue();
     }
 
     @Override

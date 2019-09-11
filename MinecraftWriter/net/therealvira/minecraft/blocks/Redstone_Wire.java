@@ -11,9 +11,9 @@ public class Redstone_Wire implements IBlock {
     }
 
     @Override
-    public byte getBlockId() {
+    public int getBlockId() {
         Material material = Material.REDSTONE_WIRE;
-        return (byte)material.getValue();
+        return material.getValue();
     }
 
     @Override

@@ -152,9 +152,11 @@ public class Region implements IBlockContainer {
 	}
 
 	@Override
-	public IBlock detectSurroundingBlocks(Vector3 position) {
-		// TODO
-		return null;
+	public IBlock detectBlockAtPosition(Vector3 position) {
+		// Get chunk
+		Chunk chunk = getChunk(position.X, position.Z, false);
+
+		return chunk==null?null:chunk.detectBlockAtPosition(position);
 	}
 
 	/**

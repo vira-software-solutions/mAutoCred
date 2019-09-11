@@ -25,6 +25,11 @@ package net.morbz.minecraft.blocks;
 */
 
 import net.morbz.minecraft.blocks.states.Facing5State;
+import net.therealvira.minecraft.blocks.SimpleBlockAdvanced;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * The class for all blocks that don't have block data.
@@ -108,8 +113,8 @@ public enum SimpleBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)material.getValue();
+	public int getBlockId() {
+		return material.getValue();
 	}
 	
 	/**

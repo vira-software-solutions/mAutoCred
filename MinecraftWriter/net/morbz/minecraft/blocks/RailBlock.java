@@ -101,8 +101,8 @@ public class RailBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)Material.RAIL.getValue();
+	public int getBlockId() {
+		return Material.RAIL.getValue();
 	}
 	
 	/**

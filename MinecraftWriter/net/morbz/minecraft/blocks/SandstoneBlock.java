@@ -44,8 +44,8 @@ public enum SandstoneBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)Material.SANDSTONE.getValue();
+	public int getBlockId() {
+		return Material.SANDSTONE.getValue();
 	}
 	
 	/**

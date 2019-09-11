@@ -189,8 +189,16 @@ public class Chunk implements ITagProvider, IBlockContainer {
 	}
 
 	@Override
-	public IBlock detectSurroundingBlocks(Vector3 position) {
-		return null;
+	public IBlock detectBlockAtPosition(Vector3 position) {
+		// Get section
+		Section section = getSection(position.Y, false);
+		if(section==null){
+			return null;
+		}
+
+		// Set block
+		int blockY = position.Y % Section.SECTION_HEIGHT;
+		return section.detectBlockAtPosition(new Vector3(position.X, blockY, position.Z));
 	}
 
 	/**

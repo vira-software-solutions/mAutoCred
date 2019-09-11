@@ -16,8 +16,8 @@ public enum PrismarineBlock implements IBlock {
     private byte data;
 
     @Override
-    public byte getBlockId() {
-        return (byte) Material.PRISMARINE.getValue();
+    public int getBlockId() {
+        return Material.PRISMARINE.getValue();
     }
 
     @Override

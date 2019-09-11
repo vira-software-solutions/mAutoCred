@@ -59,5 +59,5 @@ public interface IBlockContainer {
 	 */
 	public void spreadSkyLight(byte light);
 
-	public IBlock detectSurroundingBlocks(Vector3 position);
+	public IBlock detectBlockAtPosition(Vector3 position);
 }

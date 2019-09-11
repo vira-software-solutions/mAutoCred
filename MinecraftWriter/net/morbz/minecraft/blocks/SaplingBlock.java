@@ -19,8 +19,8 @@ public enum SaplingBlock implements IBlock {
     }
 
     @Override
-    public byte getBlockId() {
-        return (byte) Material.SAPLING.getValue();
+    public int getBlockId() {
+        return Material.SAPLING.getValue();
     }
 
     @Override

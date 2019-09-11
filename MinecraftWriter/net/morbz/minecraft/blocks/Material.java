@@ -24,6 +24,12 @@ package net.morbz.minecraft.blocks;
 * SOFTWARE.
 */
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * This class defines all the basic block with their IDs.
  * 

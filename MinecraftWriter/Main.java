@@ -32,6 +32,8 @@ public class Main {
         var n = new Negate(null).initialize(new Vector3(0,2,0), world);
         var o = new Or(null, new NETcon(n, 0)).initialize(new Vector3(5,2,5), world);
 
+        world.setBlock(new Vector3(0,10,0), world.detectBlockAtPosition(new Vector3(0,0,0)));
+
         /// DEBUG!!
         final File SOURCE = new File("E:\\Minecraft\\mAutoCred\\worlds\\test");
         final File DESTINATION = new File("C:\\Users\\Vira\\AppData\\Roaming\\.minecraft\\saves\\test");

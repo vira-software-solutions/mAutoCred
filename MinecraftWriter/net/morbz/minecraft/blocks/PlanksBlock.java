@@ -47,8 +47,8 @@ public class PlanksBlock implements IBlock {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public byte getBlockId() {
-		return (byte)Material.PLANKS.getValue();
+	public int getBlockId() {
+		return Material.PLANKS.getValue();
 	}
 	
 	/**

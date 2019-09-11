@@ -26,8 +26,8 @@ public enum Concrete implements IBlock {
     Concrete(int value){this.value = value;}
 
     @Override
-    public byte getBlockId() {
-        return (byte) Material.CONCRETE.getValue();
+    public int getBlockId() {
+        return Material.CONCRETE.getValue();
     }
 
     @Override

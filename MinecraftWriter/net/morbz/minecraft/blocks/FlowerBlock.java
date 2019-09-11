@@ -25,8 +25,8 @@ public enum FlowerBlock implements IBlock {
     }
 
     @Override
-    public byte getBlockId() {
-        return (byte) this.material.getValue();
+    public int getBlockId() {
+        return this.material.getValue();
     }
 
     @Override
