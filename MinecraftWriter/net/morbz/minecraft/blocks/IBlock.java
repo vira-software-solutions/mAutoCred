@@ -24,10 +24,8 @@ package net.morbz.minecraft.blocks;
 * SOFTWARE.
 */
 
-import net.therealvira.minecraft.Helper;
 import net.therealvira.minecraft.blocks.SimpleBlockAdvanced;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 /**
@@ -36,6 +34,8 @@ import java.util.HashMap;
  * @author MorbZ
  */
 public interface IBlock {
+	public final static String DEFAULT_MC_PREFIX = "minecraft";
+
 	/**
 	 * Returns the block ID. That is the basic ID of the material without additional data.
 	 * 
@@ -67,6 +67,17 @@ public interface IBlock {
 		}
 
 		return AvailableBlocks.getOrDefault(id, null);
+	}
+
+	public static String getStringIDbyIntID(int id){
+		for (var entry :
+				Material.MATERIALS.entrySet()) {
+			if(entry.getValue().getValue()==id){
+				return DEFAULT_MC_PREFIX+":"+entry.getKey().toLowerCase();
+			}
+		}
+
+		return "failed..";
 	}
 
 	private static void InitializeBlocks(){

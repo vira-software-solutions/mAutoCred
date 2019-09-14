@@ -17,7 +17,7 @@ public enum RedSandstoneBlock implements IBlock {
 
     @Override
     public int getBlockId() {
-        return Material.RED_SANDSTONE.getValue();
+        return Material.MATERIALS.get("RED_SANDSTONE").getValue();
     }
 
     @Override
@@ -27,7 +27,7 @@ public enum RedSandstoneBlock implements IBlock {
 
     @Override
     public int getTransparency() {
-        return (byte) Material.RED_SANDSTONE.getTransparency();
+        return (byte) Material.MATERIALS.get("RED_SANDSTONE").getTransparency();
     }
 
 }

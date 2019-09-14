@@ -69,7 +69,7 @@ public final class ListTag extends Tag {
 	 * @param value
 	 *            The value.
 	 */
-	public ListTag(final String name, final Class<? extends Tag> type, final List<Tag> value) {
+	public ListTag(final String name, final Class<? extends Tag> type, final List<? extends Tag> value) {
 	
 		super(name);
 		this.type = type;

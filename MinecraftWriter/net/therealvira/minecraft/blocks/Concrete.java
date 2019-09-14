@@ -27,7 +27,7 @@ public enum Concrete implements IBlock {
 
     @Override
     public int getBlockId() {
-        return Material.CONCRETE.getValue();
+        return Material.MATERIALS.get("CONCRETE").getValue();
     }
 
     @Override
@@ -39,4 +39,5 @@ public enum Concrete implements IBlock {
     public int getTransparency() {
         return 0;
     }
+
 }

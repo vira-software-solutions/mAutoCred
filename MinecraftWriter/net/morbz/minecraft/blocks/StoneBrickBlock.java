@@ -46,7 +46,7 @@ public enum StoneBrickBlock implements IBlock {
 	 */
 	@Override
 	public int getBlockId() {
-		return Material.STONEBRICK.getValue();
+		return Material.MATERIALS.get("STONEBRICK").getValue();
 	}
 	
 	/**
@@ -64,4 +64,5 @@ public enum StoneBrickBlock implements IBlock {
 	public int getTransparency() {
 		return 0;
 	}
+
 }

@@ -131,9 +131,9 @@ public class SpecialRailBlock implements IBlock {
 	 */
 	@SuppressWarnings("javadoc")
 	public enum SpecialRailMaterial {
-		POWERED(Material.GOLDEN_RAIL),
-		DETECTOR(Material.DETECTOR_RAIL),
-		ACTIVATOR(Material.ACTIVATOR_RAIL);
+		POWERED(Material.MATERIALS.get("GOLDEN_RAIL")),
+		DETECTOR(Material.MATERIALS.get("DETECTOR_RAIL")),
+		ACTIVATOR(Material.MATERIALS.get("ACTIVATOR_RAIL"));
 		
 		private Material material;
 		private SpecialRailMaterial(Material material) {
@@ -143,4 +143,5 @@ public class SpecialRailBlock implements IBlock {
 			return material.getValue();
 		}
 	}
+
 }

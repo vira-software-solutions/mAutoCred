@@ -49,7 +49,7 @@ public enum StoneBlock implements IBlock {
 	 */
 	@Override
 	public int getBlockId() {
-		return Material.STONE.getValue();
+		return Material.MATERIALS.get("STONE").getValue();
 	}
 	
 	/**

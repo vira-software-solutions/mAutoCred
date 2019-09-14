@@ -52,7 +52,7 @@ public class RedstoneTorchBlock implements IBlock {
 	@Override
 	public int getBlockId() {
 		// Is active?
-		Material material = isActive ? Material.REDSTONE_TORCH : Material.UNLIT_REDSTONE_TORCH;
+		Material material = isActive ? Material.MATERIALS.get("REDSTONE_TORCH") : Material.MATERIALS.get("UNLIT_REDSTONE_TORCH");
 		return material.getValue();
 	}
 	
@@ -90,4 +90,5 @@ public class RedstoneTorchBlock implements IBlock {
 	public int getTransparency() {
 		return 1;
 	}
+
 }

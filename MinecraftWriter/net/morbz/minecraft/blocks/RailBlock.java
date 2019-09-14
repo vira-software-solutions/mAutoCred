@@ -102,7 +102,7 @@ public class RailBlock implements IBlock {
 	 */
 	@Override
 	public int getBlockId() {
-		return Material.RAIL.getValue();
+		return Material.MATERIALS.get("RAIL").getValue();
 	}
 	
 	/**
@@ -136,4 +136,5 @@ public class RailBlock implements IBlock {
 			return value;
 		}
 	}
+
 }

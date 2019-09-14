@@ -44,7 +44,7 @@ public enum SandBlock implements IBlock {
 	 */
 	@Override
 	public int getBlockId() {
-		return Material.SAND.getValue();
+		return Material.MATERIALS.get("SAND").getValue();
 	}
 	
 	/**
@@ -62,4 +62,5 @@ public enum SandBlock implements IBlock {
 	public int getTransparency() {
 		return 0;
 	}
+
 }

@@ -128,7 +128,7 @@ public class DoorBlock implements IBlock {
 	public int getTransparency() {
 		return 1;
 	}
-	
+
 	/**
 	 * The site on which the hinge is.
 	 */
@@ -143,13 +143,13 @@ public class DoorBlock implements IBlock {
 	 */
 	@SuppressWarnings("javadoc")
 	public enum DoorMaterial {
-		OAK(Material.WOODEN_DOOR),
-		IRON(Material.IRON_DOOR),
-		SPRUCE(Material.SPRUCE_DOOR),
-		BIRCH(Material.BIRCH_DOOR),
-		JUNGLE(Material.JUNGLE_DOOR),
-		ACACIA(Material.ACACIA_DOOR),
-		DARK_OAK(Material.DARK_OAK_DOOR);
+		OAK(Material.MATERIALS.get("WOODEN_DOOR")),
+		IRON(Material.MATERIALS.get("IRON_DOOR")),
+		SPRUCE(Material.MATERIALS.get("SPRUCE_DOOR")),
+		BIRCH(Material.MATERIALS.get("BIRCH_DOOR")),
+		JUNGLE(Material.MATERIALS.get("JUNGLE_DOOR")),
+		ACACIA(Material.MATERIALS.get("ACACIA_DOOR")),
+		DARK_OAK(Material.MATERIALS.get("DARK_OAK_DOOR"));
 		
 		private Material material;
 		private DoorMaterial(Material material) {

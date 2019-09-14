@@ -81,11 +81,11 @@ public class StainedBlock implements IBlock {
 			this.transparency = transparency;
 		}
 		
-		public static final StainedMaterial WOOL = new StainedMaterial(Material.WOOL, 0);
-		public static final StainedMaterial GLASS = new StainedMaterial(Material.STAINED_GLASS, 1);
-		public static final StainedMaterial CLAY = new StainedMaterial(Material.STAINED_HARDENED_CLAY, 0);
-		public static final StainedMaterial GLASS_PANE = new StainedMaterial(Material.STAINED_GLASS_PANE, 1);
-		public static final StainedMaterial CARPET = new StainedMaterial(Material.CARPET, 1);
+		public static final StainedMaterial WOOL = new StainedMaterial(Material.MATERIALS.get("WOOL"), 0);
+		public static final StainedMaterial GLASS = new StainedMaterial(Material.MATERIALS.get("STAINED_GLASS"), 1);
+		public static final StainedMaterial CLAY = new StainedMaterial(Material.MATERIALS.get("STAINED_HARDENED_CLAY"), 0);
+		public static final StainedMaterial GLASS_PANE = new StainedMaterial(Material.MATERIALS.get("STAINED_GLASS_PANE"), 1);
+		public static final StainedMaterial CARPET = new StainedMaterial(Material.MATERIALS.get("CARPET"), 1);
 	}
 	
 	/**

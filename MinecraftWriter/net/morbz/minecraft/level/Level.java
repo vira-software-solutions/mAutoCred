@@ -27,11 +27,7 @@ package net.morbz.minecraft.level;
 import net.morbz.minecraft.tags.CompoundTagFactory;
 import net.morbz.minecraft.tags.ITagProvider;
 
-import org.jnbt.ByteTag;
-import org.jnbt.IntTag;
-import org.jnbt.LongTag;
-import org.jnbt.StringTag;
-import org.jnbt.Tag;
+import org.jnbt.*;
 
 /**
  * The level defines the settings for the world. Like game mode, spawn point, etc.
@@ -179,6 +175,20 @@ public class Level implements ITagProvider {
 	public Tag getTag() {
 		// Set level tags
 		CompoundTagFactory factory = new CompoundTagFactory("Data");
+
+		// Generator options
+		factory.set(new StringTag("generatorOptions", generator.getGeneratorOptions()));
+
+		factory.set(new StringTag("DataVersion:", "1976;"));
+		factory.set(new IntTag("version", 19133));
+
+		CompoundTagFactory versionFactory = new CompoundTagFactory("Version");
+		versionFactory.set(new IntTag("Id", 1976));
+		versionFactory.set(new StringTag("Name", "1.14.4"));
+		versionFactory.set(new ByteTag("Snapshot", (byte)0));
+
+		factory.set(versionFactory.getTag());
+
 		factory.set(new ByteTag("allowCommands", allowCommands ? (byte)1 : (byte)0));
 		factory.set(new IntTag("GameType", gameType.getValue()));
 		factory.set(new StringTag("generatorName", generator.getGeneratorName()));
@@ -189,13 +199,7 @@ public class Level implements ITagProvider {
 		factory.set(new IntTag("SpawnX", spawnX));
 		factory.set(new IntTag("SpawnY", spawnY));
 		factory.set(new IntTag("SpawnZ", spawnZ));
-		factory.set(new IntTag("version", 19133));
-		
-		// Generator options
-		String options = generator.getGeneratorOptions();
-		if(options != null) {
-			factory.set(new StringTag("generatorOptions", options));
-		}
+		factory.set(new ByteTag("Difficulty", (byte)0));
 		
 		// Make root tag
 		CompoundTagFactory factory2 = new CompoundTagFactory("");

@@ -12,7 +12,7 @@ public class Redstone_Wire implements IBlock {
 
     @Override
     public int getBlockId() {
-        Material material = Material.REDSTONE_WIRE;
+        Material material = Material.MATERIALS.get("REDSTONE_WIRE");
         return material.getValue();
     }
 
@@ -25,4 +25,5 @@ public class Redstone_Wire implements IBlock {
     public int getTransparency() {
         return 1;
     }
+
 }

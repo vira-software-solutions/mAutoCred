@@ -17,7 +17,7 @@ public class Repeater implements IBlock {
 
     @Override
     public int getBlockId() {
-        Material material = powered?Material.POWERED_REPEATER:Material.UNPOWERED_REPEATER;
+        Material material = powered?Material.MATERIALS.get("POWERED_REPEATER"):Material.MATERIALS.get("UNPOWERED_REPEATER");
         return material.getValue();
     }
 
@@ -46,4 +46,5 @@ public class Repeater implements IBlock {
     public int getTransparency() {
         return 1;
     }
+
 }

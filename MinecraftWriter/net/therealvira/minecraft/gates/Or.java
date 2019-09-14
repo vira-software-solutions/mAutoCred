@@ -1,6 +1,5 @@
 package net.therealvira.minecraft.gates;
 
-import net.morbz.minecraft.blocks.SimpleBlock;
 import net.morbz.minecraft.blocks.states.Facing4State;
 import net.morbz.minecraft.world.World;
 import net.therealvira.minecraft.blocks.Concrete;
@@ -20,11 +19,11 @@ public class Or extends Gate {
         world.setBlock(new Vector3(position.X,position.Y,position.Z+1), new Repeater(false, Facing4State.SOUTH, (byte) 1));
         world.setBlock(new Vector3(position.X+2,position.Y,position.Z+1), new Repeater(false, Facing4State.SOUTH, (byte) 1));
 
-        world.setBlock(new Vector3(position.X,position.Y,position.Z+2), SimpleBlock.REDSTONE_WIRE);
-        world.setBlock(new Vector3(position.X+1,position.Y,position.Z+2), SimpleBlock.REDSTONE_WIRE);
-        world.setBlock(new Vector3(position.X+2,position.Y,position.Z+2), SimpleBlock.REDSTONE_WIRE);
+        placeRedstoneONBlock(new Vector3(position.X,position.Y,position.Z+2), world,  this.BlockSheme);
+        placeRedstoneONBlock(new Vector3(position.X+1,position.Y,position.Z+2), world,  this.BlockSheme);
+        placeRedstoneONBlock(new Vector3(position.X+2,position.Y,position.Z+2), world,  this.BlockSheme);
 
-        world.setBlock(this.OutputLocations[0], SimpleBlock.REDSTONE_WIRE);
+        placeRedstoneONBlock(this.OutputLocations[0], world, this.BlockSheme);
     }
 
     @Override

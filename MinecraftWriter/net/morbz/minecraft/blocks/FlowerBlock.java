@@ -5,16 +5,16 @@ package net.morbz.minecraft.blocks;
  */
 public enum FlowerBlock implements IBlock {
 
-    DANDELION( Material.YELLOW_FLOWER, (byte) 0 ),
-    POPPY( Material.RED_FLOWER, (byte) 0 ),
-    BLUE_ORCHID( Material.RED_FLOWER, (byte) 1 ),
-    ALLIUM( Material.RED_FLOWER, (byte) 2 ),
-    AZURE_BLUET( Material.RED_FLOWER, (byte) 3 ),
-    RED_TULIP( Material.RED_FLOWER, (byte) 4 ),
-    ORANGE_TULIP( Material.RED_FLOWER, (byte) 5 ),
-    WHITE_TULIP( Material.RED_FLOWER, (byte) 6 ),
-    PINK_TULIP( Material.RED_FLOWER, (byte) 7 ),
-    OXEYE_DAISY( Material.RED_FLOWER, (byte) 8 );
+    DANDELION( Material.MATERIALS.get("YELLOW_FLOWER"), (byte) 0 ),
+    POPPY( Material.MATERIALS.get("RED_FLOWER"), (byte) 0 ),
+    BLUE_ORCHID( Material.MATERIALS.get("RED_FLOWER"), (byte) 1 ),
+    ALLIUM( Material.MATERIALS.get("RED_FLOWER"), (byte) 2 ),
+    AZURE_BLUET( Material.MATERIALS.get("RED_FLOWER"), (byte) 3 ),
+    RED_TULIP( Material.MATERIALS.get("RED_FLOWER"), (byte) 4 ),
+    ORANGE_TULIP( Material.MATERIALS.get("RED_FLOWER"), (byte) 5 ),
+    WHITE_TULIP( Material.MATERIALS.get("RED_FLOWER"), (byte) 6 ),
+    PINK_TULIP( Material.MATERIALS.get("RED_FLOWER"), (byte) 7 ),
+    OXEYE_DAISY( Material.MATERIALS.get("RED_FLOWER"), (byte) 8 );
 
     private Material material;
     private byte data;

@@ -45,7 +45,7 @@ public enum DirtBlock implements IBlock {
 	 */
 	@Override
 	public int getBlockId() {
-		return Material.DIRT.getValue();
+		return Material.MATERIALS.get("DIRT").getValue();
 	}
 	
 	/**
@@ -63,4 +63,5 @@ public enum DirtBlock implements IBlock {
 	public int getTransparency() {
 		return 0;
 	}
+
 }

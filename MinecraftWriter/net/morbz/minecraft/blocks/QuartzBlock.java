@@ -58,7 +58,7 @@ public class QuartzBlock implements IBlock {
 	 */
 	@Override
 	public int getBlockId() {
-		return Material.QUARTZ_BLOCK.getValue();
+		return Material.MATERIALS.get("QUARTZ_BLOCK").getValue();
 	}
 	
 	/**
@@ -112,4 +112,5 @@ public class QuartzBlock implements IBlock {
 			return value;
 		}
 	}
+
 }

@@ -20,7 +20,7 @@ public enum SaplingBlock implements IBlock {
 
     @Override
     public int getBlockId() {
-        return Material.SAPLING.getValue();
+        return Material.MATERIALS.get("SAPLING").getValue();
     }
 
     @Override
@@ -30,7 +30,7 @@ public enum SaplingBlock implements IBlock {
 
     @Override
     public int getTransparency() {
-        return (byte) Material.SAPLING.getTransparency();
+        return (byte) Material.MATERIALS.get("SAPLING").getTransparency();
     }
 
 }

@@ -48,7 +48,7 @@ public class PlanksBlock implements IBlock {
 	 */
 	@Override
 	public int getBlockId() {
-		return Material.PLANKS.getValue();
+		return Material.MATERIALS.get("PLANKS").getValue();
 	}
 	
 	/**
@@ -66,4 +66,5 @@ public class PlanksBlock implements IBlock {
 	public int getTransparency() {
 		return 0;
 	}
+
 }

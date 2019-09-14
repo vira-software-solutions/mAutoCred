@@ -17,7 +17,7 @@ public enum PrismarineBlock implements IBlock {
 
     @Override
     public int getBlockId() {
-        return Material.PRISMARINE.getValue();
+        return Material.MATERIALS.get("PRISMARINE").getValue();
     }
 
     @Override
@@ -27,7 +27,7 @@ public enum PrismarineBlock implements IBlock {
 
     @Override
     public int getTransparency() {
-        return (byte) Material.PRISMARINE.getValue();
+        return (byte) Material.MATERIALS.get("PRISMARINE").getValue();
     }
 
 }

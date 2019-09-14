@@ -18,14 +18,16 @@ public class Main {
         // String worldName = args[1];
 
         DefaultLayers layers = new DefaultLayers();
-        layers.setLayer(0, Material.BEDROCK);
-        layers.setLayer(1, Material.MELON_BLOCK);
+        layers.setLayer(0, Material.MATERIALS.get("BEDROCK"));
+        layers.setLayer(1, Material.MATERIALS.get("CONCRETE"));
 
         IGenerator generator = new FlatGenerator(layers);
 
         Level level = new Level("test", generator);
         level.setGameType(GameType.CREATIVE);
-        level.setSpawnPoint(0, 0, 3);
+        level.setMapFeatures(false);
+
+        level.setSpawnPoint(0, 3, 0);
 
         World world = new World(level, layers);
 
