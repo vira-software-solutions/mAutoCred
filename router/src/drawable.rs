@@ -102,10 +102,10 @@ impl Drawable for map::Component {
             },
             map::Component::Empty { pos } => {
                 // debug view
-                if m.placeable_pos(*pos) {
-                    let (p, _, _) = get_default_drawparam(&ctx, &m, *pos, offset, assets.color_debug);
-                    draw(ctx, &assets.redstone_dust_dot, p)?;
-                }
+                // if m.placeable_pos(*pos) {
+                //     let (p, _, _) = get_default_drawparam(&ctx, &m, *pos, offset, assets.color_debug);
+                //     draw(ctx, &assets.redstone_dust_dot, p)?;
+                // }
 
                 Ok(())
             },

@@ -207,7 +207,6 @@ pub struct Path {
     pub to: Position,
     pub order: i32,
     pub replace: bool,
-    pub reverse: bool,
     path: Option<Vec<Position>>,
 }
 
@@ -230,7 +229,6 @@ impl Path {
             to,
             order,
             replace: false,
-            reverse: false,
             path: None,
         }
     }
@@ -239,12 +237,9 @@ impl Path {
     // see: https://www.geeksforgeeks.org/a-search-algorithm
     // returns false if no path is possible
     pub fn pathfind(&mut self, map: &Map) -> bool {
-        let to = if self.reverse { self.from } else { self.to };
-        let from = if self.reverse { self.to } else { self.from };
-
         let mut closed: Vec<Rc<PathNode>> = Vec::new();
         let mut open = vec!(Rc::new(PathNode {
-            pos: from,
+            pos: self.from,
             predecessor: None,
             distance: Cell::new(0),
         }));
@@ -278,14 +273,14 @@ impl Path {
                         successors.push(Rc::new(PathNode {
                             pos: pos,
                             predecessor: Some(q.clone()),
-                            distance: Cell::new(to.manhattan_distance(&pos)),
+                            distance: Cell::new(self.to.manhattan_distance(&pos)),
                         }));
                     }
                 }
             }
 
             for s in successors {
-                if s.pos == to {
+                if s.pos == self.to {
                     let mut path = Vec::new();
                     let mut cur = s.clone();
                     loop {
@@ -303,7 +298,7 @@ impl Path {
                     return true;
                 }
 
-                let h = to.manhattan_distance(&s.pos);
+                let h = self.to.manhattan_distance(&s.pos);
                 s.distance.set(h + 1 + q.distance.get());
 
                 let mut has = false;
