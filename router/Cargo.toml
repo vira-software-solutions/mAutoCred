@@ -1,0 +1,11 @@
+[package]
+name = "router"
+version = "0.1.0"
+authors = ["Stefan Reiter <stefan@pimaker.at>"]
+edition = "2018"
+
+[profile.dev]
+opt-level = 1
+
+[dependencies]
+ggez = "0.5"
