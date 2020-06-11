@@ -11,89 +11,38 @@ use std::sync::Arc;
 use std::sync::mpsc::channel;
 
 fn main() {
-    eprintln!("Initializing graphics context...");
     let (state_tx, state_rx) = channel();
     let (map_tx, map_rx) = channel();
     let graphics_handle = thread::spawn(move || {
         graphics::graphics_init(state_rx, map_rx);
     });
-    eprintln!("Graphics thread started!");
 
-    eprintln!("Creating example map...");
-    let components = vec!(
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 0,
-                y: 0,
-            }
-        },
-        map::Component::Redstone {
+    let mut components = vec!(
+        map::Component::Empty {
             pos: map::Position {
                 x: 15,
                 y: 15,
             }
         },
-        map::Component::Redstone {
+    );
+
+    for i in 0..=15i32 {
+        components.push(map::Component::Redstone {
             pos: map::Position {
-                x: 2,
-                y: 13,
-            }
-        },
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 3,
-                y: 12,
-            }
-        },
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 6,
-                y: 9,
-            }
-        },
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 7,
-                y: 8,
-            }
-        },
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 8,
-                y: 7,
-            }
-        },
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 9,
+                x: i,
                 y: 6,
             }
-        },
-        map::Component::Redstone {
+        });
+    }
+
+    for i in 0..=15i32 {
+        components.push(map::Component::Redstone {
             pos: map::Position {
-                x: 10,
-                y: 5,
+                x: 9,
+                y: i,
             }
-        },
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 11,
-                y: 4,
-            }
-        },
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 12,
-                y: 3,
-            }
-        },
-        map::Component::Redstone {
-            pos: map::Position {
-                x: 13,
-                y: 2,
-            }
-        },
-    );
+        });
+    }
 
     let mut map = map::Map::new(&components);
     let m = Arc::new(map.clone());
@@ -123,5 +72,4 @@ fn main() {
     }
 
     graphics_handle.join().unwrap();
-    eprintln!("Done, goodbye!");
 }

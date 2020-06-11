@@ -95,6 +95,39 @@ impl Drawable for map::Component {
                 Ok(())
             },
             map::Component::Bridge { pos, rot } => {
+                let (p, scale, pos) = get_default_drawparam(&ctx, &m, *pos, offset, assets.color_bridge);
+                let p = match rot {
+                    map::Direction::Up | map::Direction::Down => {
+                        p
+                    },
+                    map::Direction::Left | map::Direction::Right => {
+                        p.scale(graphics::Vector2::new(scale.y, scale.x)).rotation(PI/2.0).dest(pos + offset)
+                    }
+                };
+
+                match rot {
+                    map::Direction::Up => {
+                        draw(ctx, &assets.redstone_dust_line0, p)?;
+                        draw(ctx, &assets.redstone_dust_line0, p.dest(pos + map::Position { x: 0, y: -(TEXTURE_SIZE as f32 * scale.y) as i32 } + offset))?;
+                        draw(ctx, &assets.redstone_dust_line0, p.dest(pos + map::Position { x: 0, y: -(2.0 * TEXTURE_SIZE as f32 * scale.y) as i32 } + offset))?;
+                    },
+                    map::Direction::Down => {
+                        draw(ctx, &assets.redstone_dust_line0, p)?;
+                        draw(ctx, &assets.redstone_dust_line0, p.dest(pos + map::Position { x: 0, y: (TEXTURE_SIZE as f32 * scale.y) as i32 } + offset))?;
+                        draw(ctx, &assets.redstone_dust_line0, p.dest(pos + map::Position { x: 0, y: (2.0 * TEXTURE_SIZE as f32 * scale.y) as i32 } + offset))?;
+                    },
+                    map::Direction::Left => {
+                        draw(ctx, &assets.redstone_dust_line0, p)?;
+                        draw(ctx, &assets.redstone_dust_line0, p.dest(pos + map::Position { x: -(TEXTURE_SIZE as f32 * scale.x) as i32, y: 0 } + offset))?;
+                        draw(ctx, &assets.redstone_dust_line0, p.dest(pos + map::Position { x: -(2.0 * TEXTURE_SIZE as f32 * scale.x) as i32, y: 0 } + offset))?;
+                    },
+                    map::Direction::Right => {
+                        draw(ctx, &assets.redstone_dust_line0, p)?;
+                        draw(ctx, &assets.redstone_dust_line0, p.dest(pos + map::Position { x: (TEXTURE_SIZE as f32 * scale.x) as i32, y: 0 } + offset))?;
+                        draw(ctx, &assets.redstone_dust_line0, p.dest(pos + map::Position { x: (2.0 * TEXTURE_SIZE as f32 * scale.x) as i32, y: 0 } + offset))?;
+                    }
+                }
+
                 Ok(())
             },
             map::Component::Gate { pos, rot, size, gate_type, inputs, outputs } => {

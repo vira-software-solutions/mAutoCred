@@ -27,7 +27,7 @@ pub fn graphics_init(update_state_recv: Receiver<String>, map_recv: Receiver<Arc
             srgb: true,
         })
         .add_resource_path(path::PathBuf::from("img"))
-        .add_resource_path(path::PathBuf::from("../img"))
+        // .add_resource_path(path::PathBuf::from("../img"))
         .build()
         .expect("error: could not create ezgg visualization context");
 
@@ -42,6 +42,7 @@ pub struct Assets {
 
     pub color_background: Color,
     pub color_redstone: Color,
+    pub color_bridge: Color,
     pub color_debug: Color,
 
     pub redstone_dust_dot: Image,
@@ -55,7 +56,8 @@ impl Assets {
 
             color_background: Color::from_rgb(230, 230, 230),
             color_redstone: Color::from_rgb(180, 0, 0),
-            color_debug: Color::from_rgb(0, 255, 0),
+            color_bridge: Color::from_rgb(0, 255, 40),
+            color_debug: Color::from_rgb(0, 0, 200),
 
             redstone_dust_dot: Image::new(ctx, "/redstone_dust_dot.png").unwrap(),
             redstone_dust_line0: Image::new(ctx, "/redstone_dust_line0.png").unwrap(),

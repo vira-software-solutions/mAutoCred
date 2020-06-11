@@ -58,9 +58,9 @@ pub enum Component {
         pos: Position,
     },
     Bridge {
-        // defines the top left point of the bridge
+        // defines the starting point of the bridge
         pos: Position,
-        rot: Rotation,
+        rot: Direction,
         // no size, bridge is always 1x3 (or 3x1 respectively)
     },
     Gate {
@@ -84,12 +84,13 @@ impl Map {
     pub fn new(cs: &[Component]) -> Map {
         let mut size = Size { width: 0, height: 0 };
         let mut components: Vec<Component> = Vec::new();
+        // calculate map size by most bottom-right component
         for c in cs {
             let pos = match c {
                 Component::Redstone { pos } => *pos,
                 Component::Bridge { pos, rot: _ } => *pos,
                 Component::Gate { pos, rot: _, size: _, inputs: _, outputs: _, gate_type: _ } => *pos,
-                Component::Empty { pos } => Position { x: 0, y: 0 },
+                Component::Empty { pos } => *pos,
             };
             if pos.x + 1 > size.width {
                 size.width = pos.x + 1
@@ -147,7 +148,7 @@ impl Map {
         Some(self.components[idx].clone())
     }
 
-    pub fn placeable_pos(&self, pos: Position) -> bool {
+    pub fn placeable_pos(&self, pos: Position, exception: Option<Direction>) -> bool {
         if pos.x < 0 || pos.y < 0 ||
            pos.x >= self.size.width || pos.y >= self.size.height {
                return false;
@@ -158,6 +159,31 @@ impl Map {
                 // diagonals don't matter
                 if x.abs() == y.abs() {
                     continue;
+                }
+
+                if let Some(e) = exception {
+                    match e {
+                        Direction::Up => {
+                            if y == -1 {
+                                continue;
+                            }
+                        },
+                        Direction::Down => {
+                            if y == 1 {
+                                continue;
+                            }
+                        },
+                        Direction::Left => {
+                            if x == -1 {
+                                continue;
+                            }
+                        },
+                        Direction::Right => {
+                            if x == 1 {
+                                continue;
+                            }
+                        }
+                    }
                 }
 
                 let offset = Position { x, y };
@@ -183,19 +209,25 @@ impl Map {
     pub fn apply_path(&mut self, path: Path) {
         if let Some(ref path) = path.path {
             for node in path {
-                let idx = (node.x + self.size.width * node.y) as usize;
+                let idx = (node.pos.x + self.size.width * node.pos.y) as usize;
                 if idx >= self.components.len() {
-                    eprintln!("x{} y{}", node.x, node.y);
                     panic!("cannot apply path outside of map size");
                 }
 
-                // match self.components[idx] {
-                //     Component::Empty => (),
-                //     _ => panic!("cannot apply path over existing components")
-                // }
+                match self.components[idx] {
+                    Component::Empty { pos } => (),
+                    _ => panic!("cannot apply path over existing components")
+                }
 
-                self.components[idx] = Component::Redstone {
-                    pos: *node,
+                if let Some(bridge) = node.bridge {
+                    self.components[idx] = Component::Bridge {
+                        pos: node.pos,
+                        rot: bridge,
+                    }
+                } else {
+                    self.components[idx] = Component::Redstone {
+                        pos: node.pos,
+                    }
                 }
             }
         }
@@ -207,13 +239,19 @@ pub struct Path {
     pub to: Position,
     pub order: i32,
     pub replace: bool,
-    path: Option<Vec<Position>>,
+    path: Option<Vec<MaybeBridge>>,
+}
+
+struct MaybeBridge {
+    pos: Position,
+    bridge: Option<Direction>,
 }
 
 struct PathNode {
     pos: Position,
     predecessor: Option<Rc<PathNode>>,
     distance: Cell<i32>,
+    is_bridge: Option<Direction>,
 }
 
 impl PartialEq for PathNode {
@@ -242,6 +280,7 @@ impl Path {
             pos: self.from,
             predecessor: None,
             distance: Cell::new(0),
+            is_bridge: None,
         }));
 
         while open.len() > 0 {
@@ -268,23 +307,90 @@ impl Path {
 
                     let offset = Position { x, y };
                     let pos = q.pos + offset;
-                    let placeable = map.placeable_pos(pos);
+                    let placeable = map.placeable_pos(pos, None);
                     if placeable {
                         successors.push(Rc::new(PathNode {
                             pos: pos,
                             predecessor: Some(q.clone()),
                             distance: Cell::new(self.to.manhattan_distance(&pos)),
+                            is_bridge: None,
                         }));
                     }
                 }
             }
 
+            // generate bridge successors
+            for x in -1..=1i32 {
+                for y in -1..=1i32 {
+                    if (x == 0 && y == 0) || x.abs() == y.abs() {
+                        continue;
+                    }
+
+                    let dir = if y == -1 {
+                        Direction::Up
+                    } else if y == 1 {
+                        Direction::Down
+                    } else if x == -1 {
+                        Direction::Left
+                    } else {
+                        Direction::Right
+                    };
+
+                    let op_dir = if y == -1 {
+                        Direction::Down
+                    } else if y == 1 {
+                        Direction::Up
+                    } else if x == -1 {
+                        Direction::Right
+                    } else {
+                        Direction::Left
+                    };
+
+                    // e e r e e
+                    // ^ p r p
+                    let offset = Position { x, y };
+                    let offset2 = Position { x: x * 2, y: y * 2 };
+                    let offset3 = Position { x: x * 3, y: y * 3 };
+                    let pos = q.pos + offset;
+                    let pos2 = q.pos + offset2;
+                    let pos3 = q.pos + offset3;
+
+                    let redstone = match map.component_by_pos(pos2) {
+                        Some(c) => match c {
+                            Component::Redstone { pos } => true,
+                            _ => false
+                        },
+                        None => false
+                    };
+
+                    let placeable = redstone &&
+                        map.placeable_pos(pos, Some(dir)) &&
+                        map.placeable_pos(pos3, Some(op_dir));
+
+                    if placeable {
+                        successors.push(Rc::new(PathNode {
+                            pos: pos3,
+                            predecessor: Some(q.clone()),
+                            distance: Cell::new(self.to.manhattan_distance(&pos3)),
+                            is_bridge: Some(op_dir),
+                        }));
+                    }
+                }
+            }
+
+
             for s in successors {
                 if s.pos == self.to {
+                    // Done, calculate path from end to start
                     let mut path = Vec::new();
                     let mut cur = s.clone();
                     loop {
-                        path.push(cur.pos);
+                        let ins = MaybeBridge {
+                            pos: cur.pos,
+                            bridge: cur.is_bridge,
+                        };
+                        path.push(ins);
+
                         match &cur.predecessor {
                             Some(p) => {
                                 cur = p.clone();
@@ -298,8 +404,14 @@ impl Path {
                     return true;
                 }
 
+                let cost = if let Some(_) = s.is_bridge {
+                    3
+                } else {
+                    1
+                };
+
                 let h = self.to.manhattan_distance(&s.pos);
-                s.distance.set(h + 1 + q.distance.get());
+                s.distance.set(h + cost + q.distance.get());
 
                 let mut has = false;
                 let mut to_remove = None;
