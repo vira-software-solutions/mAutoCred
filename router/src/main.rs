@@ -17,16 +17,9 @@ fn main() {
         graphics::graphics_init(state_rx, map_rx);
     });
 
-    let mut components = vec!(
-        map::Component::Empty {
-            pos: map::Position {
-                x: 15,
-                y: 15,
-            }
-        },
-    );
+    let mut components = Vec::new();
 
-    for i in 0..=15i32 {
+    for i in 0..=63i32 {
         components.push(map::Component::Redstone {
             pos: map::Position {
                 x: i,
@@ -35,7 +28,7 @@ fn main() {
         });
     }
 
-    for i in 0..=15i32 {
+    for i in 0..=63i32 {
         components.push(map::Component::Redstone {
             pos: map::Position {
                 x: 9,
@@ -55,8 +48,8 @@ fn main() {
             y: 2,
         },
         map::Position {
-            x: 13,
-            y: 13,
+            x: 40,
+            y: 51,
         }, 0);
 
     let res = p.pathfind(&map);

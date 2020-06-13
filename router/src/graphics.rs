@@ -8,7 +8,7 @@ use std::sync::mpsc::Receiver;
 use ggez::{Context, ContextBuilder, GameResult};
 use ggez::graphics::{self, Image, Color, Font, Text, DrawParam};
 use ggez::event::{self, EventHandler};
-use ggez::conf::{NumSamples, WindowSetup};
+use ggez::conf::{NumSamples, WindowSetup, WindowMode};
 
 use ggez::nalgebra as na;
 
@@ -31,6 +31,11 @@ pub fn graphics_init(update_state_recv: Receiver<String>, map_recv: Receiver<Arc
         .build()
         .expect("error: could not create ezgg visualization context");
 
+    let win_width = 1000;
+    let win_height = 1000;
+    graphics::set_mode(&mut ctx, WindowMode::default().dimensions(win_width as f32, win_height as f32)).unwrap();
+    graphics::set_screen_coordinates(&mut ctx, graphics::Rect::new_i32(0, 0, win_width, win_height)).unwrap();
+
     let mut game = RouterGame::new(&mut ctx, update_state_recv, map_recv);
     if let Err(e) = event::run(&mut ctx, &mut event_loop, &mut game) {
         eprintln!("error occured during visualization: {}", e)
@@ -47,6 +52,7 @@ pub struct Assets {
 
     pub redstone_dust_dot: Image,
     pub redstone_dust_line0: Image,
+    pub redstone_repeater: Image,
 }
 
 impl Assets {
@@ -61,6 +67,7 @@ impl Assets {
 
             redstone_dust_dot: Image::new(ctx, "/redstone_dust_dot.png").unwrap(),
             redstone_dust_line0: Image::new(ctx, "/redstone_dust_line0.png").unwrap(),
+            redstone_repeater: Image::new(ctx, "/repeater_on.png").unwrap(),
         }
     }
 }

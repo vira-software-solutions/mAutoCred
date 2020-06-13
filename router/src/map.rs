@@ -57,6 +57,10 @@ pub enum Component {
     Redstone {
         pos: Position,
     },
+    Repeater {
+        pos: Position,
+        rot: Direction,
+    },
     Bridge {
         // defines the starting point of the bridge
         pos: Position,
@@ -88,6 +92,7 @@ impl Map {
         for c in cs {
             let pos = match c {
                 Component::Redstone { pos } => *pos,
+                Component::Repeater{ pos, rot: _ } => *pos,
                 Component::Bridge { pos, rot: _ } => *pos,
                 Component::Gate { pos, rot: _, size: _, inputs: _, outputs: _, gate_type: _ } => *pos,
                 Component::Empty { pos } => *pos,
@@ -106,6 +111,7 @@ impl Map {
                 for c in cs {
                     let pos = match c {
                         Component::Redstone { pos } => *pos,
+                        Component::Repeater { pos, rot: _ } => *pos,
                         Component::Bridge { pos, rot: _ } => *pos,
                         Component::Gate { pos, rot: _, size: _, inputs: _, outputs: _, gate_type: _ } => *pos,
                         Component::Empty { pos } => Position { x: -1, y: -1 },
@@ -224,6 +230,11 @@ impl Map {
                         pos: node.pos,
                         rot: bridge,
                     }
+                } else if let Some(repeater) = node.repeater {
+                    self.components[idx] = Component::Repeater {
+                        pos: node.pos,
+                        rot: repeater,
+                    }
                 } else {
                     self.components[idx] = Component::Redstone {
                         pos: node.pos,
@@ -245,6 +256,7 @@ pub struct Path {
 struct MaybeBridge {
     pos: Position,
     bridge: Option<Direction>,
+    repeater: Option<Direction>,
 }
 
 struct PathNode {
@@ -252,6 +264,7 @@ struct PathNode {
     predecessor: Option<Rc<PathNode>>,
     distance: Cell<i32>,
     is_bridge: Option<Direction>,
+    is_repeater: Option<Direction>,
 }
 
 impl PartialEq for PathNode {
@@ -281,6 +294,7 @@ impl Path {
             predecessor: None,
             distance: Cell::new(0),
             is_bridge: None,
+            is_repeater: None,
         }));
 
         while open.len() > 0 {
@@ -295,89 +309,178 @@ impl Path {
             }
 
             let q = open.remove(qidx);
-
             let mut successors = Vec::new();
-            for x in -1..=1i32 {
-                for y in -1..=1i32 {
-                    // only allow horizontal and vertical movement
-                    // (no diagonal redstone)
-                    if (x == 0 && y == 0) || x.abs() == y.abs() {
-                        continue;
-                    }
 
-                    let offset = Position { x, y };
-                    let pos = q.pos + offset;
-                    let placeable = map.placeable_pos(pos, None);
-                    if placeable {
-                        successors.push(Rc::new(PathNode {
-                            pos: pos,
-                            predecessor: Some(q.clone()),
-                            distance: Cell::new(self.to.manhattan_distance(&pos)),
-                            is_bridge: None,
-                        }));
+            // generate repeater successors, but not after bridges
+            if let None = q.is_bridge {
+                for x in -1..=1i32 {
+                    for y in -1..=1i32 {
+                        if (x == 0 && y == 0) || x.abs() == y.abs() {
+                            continue;
+                        }
+
+                        let dir = if y == -1 {
+                            Direction::Up
+                        } else if y == 1 {
+                            Direction::Down
+                        } else if x == -1 {
+                            Direction::Left
+                        } else {
+                            Direction::Right
+                        };
+
+                        let offset = Position { x, y };
+                        let pos = q.pos + offset;
+                        let placeable = map.placeable_pos(pos, None);
+                        if placeable {
+                            successors.push(Rc::new(PathNode {
+                                pos: pos,
+                                predecessor: Some(q.clone()),
+                                distance: Cell::new(self.to.manhattan_distance(&pos)),
+                                is_bridge: None,
+                                is_repeater: Some(dir),
+                            }));
+                        }
                     }
                 }
             }
 
-            // generate bridge successors
-            for x in -1..=1i32 {
-                for y in -1..=1i32 {
-                    if (x == 0 && y == 0) || x.abs() == y.abs() {
-                        continue;
-                    }
-
-                    let dir = if y == -1 {
-                        Direction::Up
-                    } else if y == 1 {
-                        Direction::Down
-                    } else if x == -1 {
-                        Direction::Left
-                    } else {
-                        Direction::Right
-                    };
-
-                    let op_dir = if y == -1 {
-                        Direction::Down
-                    } else if y == 1 {
-                        Direction::Up
-                    } else if x == -1 {
-                        Direction::Right
-                    } else {
-                        Direction::Left
-                    };
-
-                    // e e r e e
-                    // ^ p r p
-                    let offset = Position { x, y };
-                    let offset2 = Position { x: x * 2, y: y * 2 };
-                    let offset3 = Position { x: x * 3, y: y * 3 };
-                    let pos = q.pos + offset;
-                    let pos2 = q.pos + offset2;
-                    let pos3 = q.pos + offset3;
-
-                    let redstone = match map.component_by_pos(pos2) {
-                        Some(c) => match c {
-                            Component::Redstone { pos } => true,
-                            _ => false
+            // calculate distance to last repeater
+            let mut distance_pre = 0;
+            let mut q_pre = q.clone();
+            if let None = q_pre.is_repeater {
+                loop {
+                    match q_pre.predecessor.clone() {
+                        Some(q_pre_pre) => {
+                            match q_pre_pre.is_repeater {
+                                Some(_) => {
+                                    break;
+                                },
+                                None => {
+                                    distance_pre += match q_pre_pre.is_bridge {
+                                        Some(_) => 5,
+                                        None => 1
+                                    };
+                                    q_pre = q_pre_pre.clone();
+                                }
+                            }
                         },
-                        None => false
-                    };
-
-                    let placeable = redstone &&
-                        map.placeable_pos(pos, Some(dir)) &&
-                        map.placeable_pos(pos3, Some(op_dir));
-
-                    if placeable {
-                        successors.push(Rc::new(PathNode {
-                            pos: pos3,
-                            predecessor: Some(q.clone()),
-                            distance: Cell::new(self.to.manhattan_distance(&pos3)),
-                            is_bridge: Some(op_dir),
-                        }));
+                        None => {
+                            break;
+                        }
                     }
                 }
             }
 
+            let skip_dir = |x: i32, y: i32, pre: Rc<PathNode>| {
+                // only allow horizontal and vertical movement
+                // (no diagonal redstone)
+                if (x == 0 && y == 0) || x.abs() == y.abs() {
+                    return true;
+                }
+
+                if let Some(rep) = pre.is_repeater {
+                    match rep {
+                        Direction::Up | Direction::Down => {
+                            if x.abs() == 1 {
+                                return true;
+                            }
+                        },
+                        Direction::Left | Direction::Right => {
+                            if y.abs() == 1 {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                false
+            };
+
+            // force repeater after 15 redstones
+            if distance_pre < 14 {
+                // generate redstone successors
+                for x in -1..=1i32 {
+                    for y in -1..=1i32 {
+                        if skip_dir(x, y, q.clone()) {
+                            continue;
+                        }
+
+                        let offset = Position { x, y };
+                        let pos = q.pos + offset;
+                        let placeable = map.placeable_pos(pos, None);
+                        if placeable {
+                            successors.push(Rc::new(PathNode {
+                                pos: pos,
+                                predecessor: Some(q.clone()),
+                                distance: Cell::new(self.to.manhattan_distance(&pos)),
+                                is_bridge: None,
+                                is_repeater: None,
+                            }));
+                        }
+                    }
+                }
+
+                // generate bridge successors
+                for x in -1..=1i32 {
+                    for y in -1..=1i32 {
+                        if skip_dir(x, y, q.clone()) {
+                            continue;
+                        }
+
+                        let dir = if y == -1 {
+                            Direction::Up
+                        } else if y == 1 {
+                            Direction::Down
+                        } else if x == -1 {
+                            Direction::Left
+                        } else {
+                            Direction::Right
+                        };
+
+                        let op_dir = if y == -1 {
+                            Direction::Down
+                        } else if y == 1 {
+                            Direction::Up
+                        } else if x == -1 {
+                            Direction::Right
+                        } else {
+                            Direction::Left
+                        };
+
+                        // e e r e e
+                        // ^ p r p
+                        let offset = Position { x, y };
+                        let offset2 = Position { x: x * 2, y: y * 2 };
+                        let offset3 = Position { x: x * 3, y: y * 3 };
+                        let pos = q.pos + offset;
+                        let pos2 = q.pos + offset2;
+                        let pos3 = q.pos + offset3;
+
+                        let redstone = match map.component_by_pos(pos2) {
+                            Some(c) => match c {
+                                Component::Redstone { pos } => true,
+                                _ => false
+                            },
+                            None => false
+                        };
+
+                        let placeable = redstone &&
+                            map.placeable_pos(pos, Some(dir)) &&
+                            map.placeable_pos(pos3, Some(op_dir));
+
+                        if placeable {
+                            successors.push(Rc::new(PathNode {
+                                pos: pos3,
+                                predecessor: Some(q.clone()),
+                                distance: Cell::new(self.to.manhattan_distance(&pos3)),
+                                is_bridge: Some(op_dir),
+                                is_repeater: None,
+                            }));
+                        }
+                    }
+                }
+            }
 
             for s in successors {
                 if s.pos == self.to {
@@ -388,6 +491,7 @@ impl Path {
                         let ins = MaybeBridge {
                             pos: cur.pos,
                             bridge: cur.is_bridge,
+                            repeater: cur.is_repeater,
                         };
                         path.push(ins);
 
@@ -406,6 +510,8 @@ impl Path {
 
                 let cost = if let Some(_) = s.is_bridge {
                     3
+                } else if let Some(_) = s.is_repeater {
+                    4
                 } else {
                     1
                 };

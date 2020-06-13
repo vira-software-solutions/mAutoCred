@@ -94,6 +94,25 @@ impl Drawable for map::Component {
 
                 Ok(())
             },
+            map::Component::Repeater { pos, rot } => {
+                let (p, scale, pos) = get_default_drawparam(&ctx, &m, *pos, offset, ggez::graphics::WHITE);
+                let p = match rot {
+                    map::Direction::Up => {
+                        p
+                    },
+                    map::Direction::Down => {
+                        p.rotation(PI)
+                    },
+                    map::Direction::Right => {
+                        p.scale(graphics::Vector2::new(scale.y, scale.x)).rotation(PI/2.0).dest(pos + offset)
+                    },
+                    map::Direction::Left => {
+                        p.scale(graphics::Vector2::new(scale.y, scale.x)).rotation(PI*1.5).dest(pos + offset)
+                    }
+                };
+
+                draw(ctx, &assets.redstone_repeater, p)
+            },
             map::Component::Bridge { pos, rot } => {
                 let (p, scale, pos) = get_default_drawparam(&ctx, &m, *pos, offset, assets.color_bridge);
                 let p = match rot {
@@ -135,7 +154,7 @@ impl Drawable for map::Component {
             },
             map::Component::Empty { pos } => {
                 // debug view
-                // if m.placeable_pos(*pos) {
+                // if m.placeable_pos(*pos, None) {
                 //     let (p, _, _) = get_default_drawparam(&ctx, &m, *pos, offset, assets.color_debug);
                 //     draw(ctx, &assets.redstone_dust_dot, p)?;
                 // }
