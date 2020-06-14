@@ -1,0 +1,223 @@
+{
+  "Name": "Example",
+  "Gates": [
+    {
+      "Type": "NEGATE",
+      "Direction": "NORTH",
+      "Position": {
+        "X": 0,
+        "Y": 2,
+        "Z": 10
+      }
+    },
+    {
+      "Type": "NEGATE",
+      "Direction": "EAST",
+      "Position": {
+        "X": 0,
+        "Y": 2,
+        "Z": 20
+      }
+    },
+    {
+      "Type": "NEGATE",
+      "Direction": "SOUTH",
+      "Position": {
+        "X": 0,
+        "Y": 2,
+        "Z": 30
+      }
+    },
+    {
+      "Type": "NEGATE",
+      "Direction": "WEST",
+      "Position": {
+        "X": 0,
+        "Y": 2,
+        "Z": 40
+      }
+    },
+    {
+      "Type": "OR",
+      "Direction": "NORTH",
+      "Position": {
+        "X": 10,
+        "Y": 2,
+        "Z": 10
+      }
+    },
+    {
+      "Type": "OR",
+      "Direction": "EAST",
+      "Position": {
+        "X": 10,
+        "Y": 2,
+        "Z": 20
+      }
+    },
+    {
+      "Type": "OR",
+      "Direction": "SOUTH",
+      "Position": {
+        "X": 10,
+        "Y": 2,
+        "Z": 30
+      }
+    },
+    {
+      "Type": "OR",
+      "Direction": "WEST",
+      "Position": {
+        "X": 10,
+        "Y": 2,
+        "Z": 40
+      }
+    },
+    {
+      "Type": "AND",
+      "Direction": "NORTH",
+      "Position": {
+        "X": 20,
+        "Y": 2,
+        "Z": 10
+      }
+    },
+    {
+      "Type": "AND",
+      "Direction": "EAST",
+      "Position": {
+        "X": 20,
+        "Y": 2,
+        "Z": 20
+      }
+    },
+    {
+      "Type": "AND",
+      "Direction": "SOUTH",
+      "Position": {
+        "X": 20,
+        "Y": 2,
+        "Z": 30
+      }
+    },
+    {
+      "Type": "AND",
+      "Direction": "WEST",
+      "Position": {
+        "X": 20,
+        "Y": 2,
+        "Z": 40
+      }
+    },
+    {
+      "Type": "REPEATER",
+      "Direction": "NORTH",
+      "Position": {
+        "X": 30,
+        "Y": 2,
+        "Z": 10
+      }
+    },
+    {
+      "Type": "REPEATER",
+      "Direction": "EAST",
+      "Position": {
+        "X": 30,
+        "Y": 2,
+        "Z": 20
+      }
+    },
+    {
+      "Type": "REPEATER",
+      "Direction": "SOUTH",
+      "Position": {
+        "X": 30,
+        "Y": 2,
+        "Z": 30
+      }
+    },
+    {
+      "Type": "REPEATER",
+      "Direction": "WEST",
+      "Position": {
+        "X": 30,
+        "Y": 2,
+        "Z": 40
+      }
+    },
+    {
+      "Type": "BRIDGE",
+      "Direction": "NORTH",
+      "Position": {
+        "X": 40,
+        "Y": 2,
+        "Z": 10
+      }
+    },
+    {
+      "Type": "BRIDGE",
+      "Direction": "EAST",
+      "Position": {
+        "X": 40,
+        "Y": 2,
+        "Z": 20
+      }
+    },
+    {
+      "Type": "BRIDGE",
+      "Direction": "SOUTH",
+      "Position": {
+        "X": 40,
+        "Y": 2,
+        "Z": 30
+      }
+    },
+    {
+      "Type": "BRIDGE",
+      "Direction": "WEST",
+      "Position": {
+        "X": 40,
+        "Y": 2,
+        "Z": 40
+      }
+    }
+  ],
+  "Lines": [
+    {
+      "Length": 60,
+      "Position": {
+        "X": -3,
+        "Y": 2,
+        "Z": -3
+      },
+      "Direction": "EAST"
+    },
+    {
+      "Length": 60,
+      "Position": {
+        "X": 57,
+        "Y": 2,
+        "Z": -3
+      },
+      "Direction": "SOUTH"
+    },
+    {
+      "Length": 60,
+      "Position": {
+        "X": 57,
+        "Y": 2,
+        "Z": 57
+      },
+      "Direction": "WEST"
+    },
+    {
+      "Length": 60,
+      "Position": {
+        "X": -3,
+        "Y": 2,
+        "Z": 57
+      },
+      "Direction": "NORTH"
+    }
+  ]
+}
