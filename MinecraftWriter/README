@@ -1,0 +1,39 @@
+## MinecraftWriter
+Takes a json formatted file as input and converts it to a minecraft world.
+
+## Json format example:
+```json
+{
+  "Name": "Example",
+  "Gates": [
+    {
+      "Type": "AND",
+      "Direction": "South",
+      "Position": {
+        "X": 0,
+        "Y": 2,
+        "Z": 3
+      }
+    }
+  ],
+  "Lines": [
+    {
+      "Position": {
+        "X": 0,
+        "Y": 2,
+        "Z": 10
+      },
+      "Length": 8,
+      "Direction": "North"
+    }
+  ]
+}
+```
+
+There is also a complete example collection inside ./Example/example0.json
+
+### Run
+To run parse your own config file, declare that json file by using the first (0) parameter.
+
+## Compile
+Use grade to compile the project (grade build). This also automatically imports every used dependency automatically.

@@ -3,8 +3,7 @@ package net.therealvira.minecraft.gates;
 import net.morbz.minecraft.blocks.IBlock;
 import net.morbz.minecraft.blocks.SimpleBlock;
 import net.morbz.minecraft.world.World;
-import net.therealvira.minecraft.blocks.SimpleBlockAdvanced;
-import net.therealvira.minecraft.blocks.Vector3;
+import net.therealvira.dto.Vector3;
 
 public abstract class Gate {
     protected final IBlock BlockSheme;

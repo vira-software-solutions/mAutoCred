@@ -31,7 +31,7 @@ import net.morbz.minecraft.tags.CompoundTagFactory;
 import net.morbz.minecraft.tags.ITagProvider;
 import net.morbz.minecraft.tags.ListTagFactory;
 
-import net.therealvira.minecraft.blocks.Vector3;
+import net.therealvira.dto.Vector3;
 import org.jnbt.ByteTag;
 import org.jnbt.CompoundTag;
 import org.jnbt.IntArrayTag;

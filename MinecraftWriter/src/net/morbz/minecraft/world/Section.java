@@ -25,11 +25,10 @@ package net.morbz.minecraft.world;
 */
 
 import net.morbz.minecraft.blocks.IBlock;
-import net.morbz.minecraft.blocks.Material;
 import net.morbz.minecraft.tags.CompoundTagFactory;
 import net.morbz.minecraft.tags.ITagProvider;
 
-import net.therealvira.minecraft.blocks.Vector3;
+import net.therealvira.dto.Vector3;
 import org.jnbt.ByteArrayTag;
 import org.jnbt.ByteTag;
 import org.jnbt.IntArrayTag;

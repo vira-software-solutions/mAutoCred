@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.therealvira.minecraft.blocks.Vector3;
+import net.therealvira.dto.Vector3;
 import org.jnbt.NBTOutputStream;
 
 import net.morbz.minecraft.blocks.IBlock;

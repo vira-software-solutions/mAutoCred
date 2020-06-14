@@ -63,7 +63,7 @@ public class Material {
 		return transparency;
 	}
 
-	public static HashMap<String, Material> MATERIALS = new HashMap<>() {{
+	public static HashMap<String, Material> MATERIALS = new HashMap<String, Material>() {{
 		put("AIR", new Material(0, 1)); // √
 		put("STONE", new Material(1, 0)); // √
 		put("GRASS", new Material(2, 0)); // √

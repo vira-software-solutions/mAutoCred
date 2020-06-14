@@ -25,7 +25,7 @@ package net.morbz.minecraft.world;
 */
 
 import net.morbz.minecraft.blocks.IBlock;
-import net.therealvira.minecraft.blocks.Vector3;
+import net.therealvira.dto.Vector3;
 
 /**
  * The interface for all classes that contain blocks.

@@ -1,4 +1,4 @@
-package net.therealvira.minecraft.blocks;
+package net.therealvira.dto;
 
 public class Vector3 {
     public static final Vector3 ZERO = new Vector3(0,0,0);

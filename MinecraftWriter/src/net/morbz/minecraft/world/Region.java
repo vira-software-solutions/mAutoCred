@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.IOException;
 
 import net.morbz.minecraft.blocks.IBlock;
-import net.therealvira.minecraft.blocks.Vector3;
+import net.therealvira.dto.Vector3;
 import net.unknown.RegionFile;
 
 import org.jnbt.NBTOutputStream;
