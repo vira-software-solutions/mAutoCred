@@ -1,7 +1,8 @@
 use std::rc::Rc;
 use std::cell::Cell;
+use std::collections::HashSet;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Hash, Eq)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
@@ -24,12 +25,6 @@ impl Position {
 pub struct Size {
     pub width: i32,
     pub height: i32,
-}
-
-#[derive(Debug, Copy, Clone)]
-pub enum Rotation {
-    Horizontal,
-    Vertical,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -70,7 +65,7 @@ pub enum Component {
     Gate {
         // defines the top left point of the gate
         pos: Position,
-        rot: Rotation,
+        rot: Direction,
         size: Size,
         inputs: Vec<Input>,
         outputs: Vec<Output>,
@@ -82,19 +77,38 @@ pub enum Component {
 pub struct Map {
     pub components: Vec<Component>,
     pub size: Size,
+
+    gate_block_cache: HashSet<Position>,
 }
 
 impl Map {
     pub fn new(cs: &[Component]) -> Map {
         let mut size = Size { width: 0, height: 0 };
         let mut components: Vec<Component> = Vec::new();
-        // calculate map size by most bottom-right component
+
+        let mut gate_block_cache = HashSet::new();
+
+        // calculate map size by most bottom-right component and fill gate_block_cache
         for c in cs {
             let pos = match c {
                 Component::Redstone { pos } => *pos,
                 Component::Repeater{ pos, rot: _ } => *pos,
                 Component::Bridge { pos, rot: _ } => *pos,
-                Component::Gate { pos, rot: _, size: _, inputs: _, outputs: _, gate_type: _ } => *pos,
+                Component::Gate { pos, rot, size, inputs: _, outputs: _, gate_type: _ } => {
+                    let (width, height) = match rot {
+                        Direction::Right | Direction::Left => (size.width, size.height-1),
+                        Direction::Up | Direction::Down => (size.height, -size.width+1),
+                    };
+
+                    for x in 0..width {
+                        for y in if height < 0 { height..=0 } else { 0..=height } {
+                            let pos = *pos + Position { x, y };
+                            gate_block_cache.insert(pos);
+                        }
+                    }
+
+                    *pos
+                },
                 Component::Empty { pos } => *pos,
             };
             if pos.x + 1 > size.width {
@@ -131,6 +145,7 @@ impl Map {
         Map {
             components,
             size,
+            gate_block_cache,
         }
     }
 
@@ -163,7 +178,7 @@ impl Map {
         for x in -1..=1i32 {
             for y in -1..=1i32 {
                 // diagonals don't matter
-                if x.abs() == y.abs() {
+                if x != 0 && y != 0 && x.abs() == y.abs() {
                     continue;
                 }
 
@@ -194,6 +209,11 @@ impl Map {
 
                 let offset = Position { x, y };
                 let pos_offset = pos + offset;
+
+                if self.gate_block_cache.contains(&pos_offset) {
+                    return false;
+                }
+
                 let idx = pos_offset.x + self.size.width * pos_offset.y;
 
                 if idx < 0 || idx as usize >= self.components.len() {

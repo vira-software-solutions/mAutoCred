@@ -9,3 +9,4 @@ opt-level = 2
 
 [dependencies]
 ggez = "0.5"
+serde_json = "1.0"

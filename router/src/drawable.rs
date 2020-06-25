@@ -150,14 +150,42 @@ impl Drawable for map::Component {
                 Ok(())
             },
             map::Component::Gate { pos, rot, size, gate_type, inputs, outputs } => {
+                let rect = ggez::graphics::Mesh::new_rectangle(
+                    ctx,
+                    ggez::graphics::DrawMode::stroke(3.0),
+                    ggez::graphics::Rect::new_i32(-TEXTURE_SIZE/2, -TEXTURE_SIZE/2, size.width * TEXTURE_SIZE, size.height * TEXTURE_SIZE),
+                    assets.color_gate
+                )?;
+
+                let (p, scale, mappos) = get_default_drawparam(&ctx, &m, *pos, offset, ggez::graphics::WHITE);
+
+                let p = match rot {
+                    map::Direction::Up | map::Direction::Down => {
+                        p.rotation(PI/2.0).dest(mappos + map::Position { x: (TEXTURE_SIZE as f32 * scale.x * (size.height-1) as f32) as i32, y: -(TEXTURE_SIZE as f32 * scale.y * (size.width-1) as f32) as i32 } + offset)
+                    },
+                    _ => p
+                };
+
+                draw(ctx, &rect, p)?;
+
+                let (pt, scale, mappos) = get_default_drawparam(&ctx, &m, *pos, offset, ggez::graphics::BLACK);
+                let pt = match rot {
+                    map::Direction::Up | map::Direction::Down => {
+                        pt.dest(mappos + map::Position { x: 0, y: -(TEXTURE_SIZE as f32 * scale.x * 0.8) as i32 } + offset)
+                    },
+                    _ => pt
+                };
+                let text = ggez::graphics::Text::new((*gate_type, assets.font, 16.0 * scale.x));
+                draw(ctx, &text, pt)?;
+
                 Ok(())
             },
             map::Component::Empty { pos } => {
                 // debug view
-                // if m.placeable_pos(*pos, None) {
-                //     let (p, _, _) = get_default_drawparam(&ctx, &m, *pos, offset, assets.color_debug);
-                //     draw(ctx, &assets.redstone_dust_dot, p)?;
-                // }
+                if m.placeable_pos(*pos, None) {
+                    let (p, _, _) = get_default_drawparam(&ctx, &m, *pos, offset, assets.color_debug);
+                    draw(ctx, &assets.redstone_dust_dot, p)?;
+                }
 
                 Ok(())
             },

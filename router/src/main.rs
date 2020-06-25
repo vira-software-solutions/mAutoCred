@@ -19,11 +19,26 @@ fn main() {
 
     let mut components = Vec::new();
 
+    components.push(map::Component::Gate {
+        pos: map::Position {
+            x: 2,
+            y: 8,
+        },
+        rot: map::Direction::Left,
+        size: map::Size {
+            width: 4,
+            height: 3,
+        },
+        inputs: Vec::new(),
+        outputs: Vec::new(),
+        gate_type: "DFF",
+    });
+
     for i in 0..=63i32 {
         components.push(map::Component::Redstone {
             pos: map::Position {
                 x: i,
-                y: 6,
+                y: 18,
             }
         });
     }

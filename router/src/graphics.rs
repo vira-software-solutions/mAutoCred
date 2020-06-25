@@ -48,6 +48,7 @@ pub struct Assets {
     pub color_background: Color,
     pub color_redstone: Color,
     pub color_bridge: Color,
+    pub color_gate: Color,
     pub color_debug: Color,
 
     pub redstone_dust_dot: Image,
@@ -63,7 +64,8 @@ impl Assets {
             color_background: Color::from_rgb(230, 230, 230),
             color_redstone: Color::from_rgb(180, 0, 0),
             color_bridge: Color::from_rgb(0, 255, 40),
-            color_debug: Color::from_rgb(0, 0, 200),
+            color_gate: Color::from_rgb(0, 0, 0),
+            color_debug: Color::from_rgba(0, 0, 200, 80),
 
             redstone_dust_dot: Image::new(ctx, "/redstone_dust_dot.png").unwrap(),
             redstone_dust_line0: Image::new(ctx, "/redstone_dust_line0.png").unwrap(),
