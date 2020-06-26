@@ -7,7 +7,7 @@ use std::sync::mpsc::Receiver;
 
 use ggez::{Context, ContextBuilder, GameResult};
 use ggez::graphics::{self, Image, Color, Font, Text, DrawParam};
-use ggez::event::{self, EventHandler};
+use ggez::event::{self, EventHandler, KeyCode, KeyMods};
 use ggez::conf::{NumSamples, WindowSetup, WindowMode};
 
 use ggez::nalgebra as na;
@@ -116,8 +116,16 @@ impl EventHandler for RouterGame {
 
 
         if let Some(map) = &self.current_map {
+            let offset = Point2::new(0.0, 20.0);
+
             for c in &map.components {
-                c.draw(ctx, &self.assets, &map, Point2::new(0.0, 20.0))?;
+                c.draw(ctx, &self.assets, &map, offset)?;
+            }
+
+            for c in &map.ports {
+                let (p, scale, _) = crate::drawable::get_default_drawparam(ctx, map, *c.1, offset, graphics::BLACK);
+                let text = Text::new((c.0.to_owned(), self.assets.font, 12.0 * scale.x));
+                graphics::draw(ctx, &text, p)?;
             }
         }
 
@@ -126,5 +134,9 @@ impl EventHandler for RouterGame {
         graphics::draw(ctx, &state_text, state_param)?;
 
         graphics::present(ctx)
+    }
+
+    fn key_down_event(&mut self, ctx: &mut Context, _key: KeyCode, _mods: KeyMods, _: bool) {
+        event::quit(ctx);
     }
 }

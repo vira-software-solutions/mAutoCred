@@ -1,6 +1,6 @@
 use std::rc::Rc;
 use std::cell::Cell;
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 #[derive(Debug, Copy, Clone, PartialEq, Hash, Eq)]
 pub struct Position {
@@ -38,11 +38,9 @@ pub enum Direction {
 #[derive(Debug, Copy, Clone)]
 pub struct InOut {
     pub relative_pos: Position,
-    pub direction: Direction,
+    pub name: &'static str,
+    pub output: bool,
 }
-
-type Output = InOut;
-type Input = InOut;
 
 #[derive(Debug, Clone)]
 pub enum Component {
@@ -67,8 +65,7 @@ pub enum Component {
         pos: Position,
         rot: Direction,
         size: Size,
-        inputs: Vec<Input>,
-        outputs: Vec<Output>,
+        in_out: Vec<InOut>,
         gate_type: &'static str,
     },
 }
@@ -76,13 +73,14 @@ pub enum Component {
 #[derive(Debug, Clone)]
 pub struct Map {
     pub components: Vec<Component>,
+    pub ports: HashMap<String, Position>,
     pub size: Size,
 
     gate_block_cache: HashSet<Position>,
 }
 
 impl Map {
-    pub fn new(cs: &[Component]) -> Map {
+    pub fn new(cs: &[Component], ports: HashMap<String, Position>) -> Map {
         let mut size = Size { width: 0, height: 0 };
         let mut components: Vec<Component> = Vec::new();
 
@@ -94,7 +92,7 @@ impl Map {
                 Component::Redstone { pos } => *pos,
                 Component::Repeater{ pos, rot: _ } => *pos,
                 Component::Bridge { pos, rot: _ } => *pos,
-                Component::Gate { pos, rot, size, inputs: _, outputs: _, gate_type: _ } => {
+                Component::Gate { pos, rot, size, in_out: _, gate_type: _ } => {
                     let (width, height) = match rot {
                         Direction::Right | Direction::Left => (size.width, size.height-1),
                         Direction::Up | Direction::Down => (size.height, -size.width+1),
@@ -127,7 +125,7 @@ impl Map {
                         Component::Redstone { pos } => *pos,
                         Component::Repeater { pos, rot: _ } => *pos,
                         Component::Bridge { pos, rot: _ } => *pos,
-                        Component::Gate { pos, rot: _, size: _, inputs: _, outputs: _, gate_type: _ } => *pos,
+                        Component::Gate { pos, rot: _, size: _, in_out: _, gate_type: _ } => *pos,
                         Component::Empty { pos } => Position { x: -1, y: -1 },
                     };
                     if pos.x == x && pos.y == y {
@@ -144,6 +142,7 @@ impl Map {
 
         Map {
             components,
+            ports,
             size,
             gate_block_cache,
         }
@@ -169,10 +168,22 @@ impl Map {
         Some(self.components[idx].clone())
     }
 
-    pub fn placeable_pos(&self, pos: Position, exception: Option<Direction>) -> bool {
-        if pos.x < 0 || pos.y < 0 ||
-           pos.x >= self.size.width || pos.y >= self.size.height {
+    pub fn placeable_pos(&self, pos: Position, exception: Option<Direction>, ok: &[Position], no: &[Position]) -> bool {
+        if pos.x < 1 || pos.y < 1 ||
+           pos.x > self.size.width - 2 || pos.y > self.size.height - 2 {
                return false;
+        }
+
+        for i in ok {
+            if *i == pos {
+                return true
+            }
+        }
+
+        for n in no {
+            if *n == pos {
+                return false
+            }
         }
 
         for x in -1..=1i32 {
@@ -212,6 +223,12 @@ impl Map {
 
                 if self.gate_block_cache.contains(&pos_offset) {
                     return false;
+                }
+
+                for i in ok {
+                    if *i == pos_offset {
+                        return true
+                    }
                 }
 
                 let idx = pos_offset.x + self.size.width * pos_offset.y;
@@ -307,7 +324,7 @@ impl Path {
     // implements A* path finding algorithm
     // see: https://www.geeksforgeeks.org/a-search-algorithm
     // returns false if no path is possible
-    pub fn pathfind(&mut self, map: &Map) -> bool {
+    pub fn pathfind(&mut self, map: &Map, ok: &[Position], no: &[Position]) -> bool {
         let mut closed: Vec<Rc<PathNode>> = Vec::new();
         let mut open = vec!(Rc::new(PathNode {
             pos: self.from,
@@ -331,35 +348,38 @@ impl Path {
             let q = open.remove(qidx);
             let mut successors = Vec::new();
 
-            // generate repeater successors, but not after bridges
+            // generate repeater successors, but not after bridges and not twice
             if let None = q.is_bridge {
-                for x in -1..=1i32 {
-                    for y in -1..=1i32 {
-                        if (x == 0 && y == 0) || x.abs() == y.abs() {
-                            continue;
-                        }
+                if let None = q.is_repeater {
+                    for x in -1..=1i32 {
+                        for y in -1..=1i32 {
+                            if (x == 0 && y == 0) || x.abs() == y.abs() {
+                                continue;
+                            }
 
-                        let dir = if y == -1 {
-                            Direction::Up
-                        } else if y == 1 {
-                            Direction::Down
-                        } else if x == -1 {
-                            Direction::Left
-                        } else {
-                            Direction::Right
-                        };
+                            let dir = if y == -1 {
+                                Direction::Up
+                            } else if y == 1 {
+                                Direction::Down
+                            } else if x == -1 {
+                                Direction::Left
+                            } else {
+                                Direction::Right
+                            };
 
-                        let offset = Position { x, y };
-                        let pos = q.pos + offset;
-                        let placeable = map.placeable_pos(pos, None);
-                        if placeable {
-                            successors.push(Rc::new(PathNode {
-                                pos: pos,
-                                predecessor: Some(q.clone()),
-                                distance: Cell::new(self.to.manhattan_distance(&pos)),
-                                is_bridge: None,
-                                is_repeater: Some(dir),
-                            }));
+                            let offset = Position { x, y };
+                            let pos = q.pos + offset;
+                            let placeable = map.placeable_pos(pos, None, ok, no);
+                            let dist = self.to.manhattan_distance(&pos);
+                            if placeable && dist > 0 {
+                                successors.push(Rc::new(PathNode {
+                                    pos,
+                                    predecessor: Some(q.clone()),
+                                    distance: Cell::new(dist),
+                                    is_bridge: None,
+                                    is_repeater: Some(dir),
+                                }));
+                            }
                         }
                     }
                 }
@@ -428,7 +448,7 @@ impl Path {
 
                         let offset = Position { x, y };
                         let pos = q.pos + offset;
-                        let placeable = map.placeable_pos(pos, None);
+                        let placeable = map.placeable_pos(pos, None, ok, no);
                         if placeable {
                             successors.push(Rc::new(PathNode {
                                 pos: pos,
@@ -486,8 +506,8 @@ impl Path {
                         };
 
                         let placeable = redstone &&
-                            map.placeable_pos(pos, Some(dir)) &&
-                            map.placeable_pos(pos3, Some(op_dir));
+                            map.placeable_pos(pos, Some(dir), ok, no) &&
+                            map.placeable_pos(pos3, Some(op_dir), ok, no);
 
                         if placeable {
                             successors.push(Rc::new(PathNode {

@@ -28,7 +28,7 @@ impl std::ops::Mul<graphics::Vector2> for map::Position {
     }
 }
 
-fn get_default_drawparam(ctx: &Context, m: &map::Map, pos: map::Position, offset: graphics::Point2, color: Color) -> (DrawParam, graphics::Vector2, map::Position) {
+pub fn get_default_drawparam(ctx: &Context, m: &map::Map, pos: map::Position, offset: graphics::Point2, color: Color) -> (DrawParam, graphics::Vector2, map::Position) {
     // calculate screen position and scale
     let screen_size = window(ctx).get_inner_size().unwrap();
     let screen_x = screen_size.width;
@@ -149,7 +149,7 @@ impl Drawable for map::Component {
 
                 Ok(())
             },
-            map::Component::Gate { pos, rot, size, gate_type, inputs, outputs } => {
+            map::Component::Gate { pos, rot, size, gate_type, in_out: _ } => {
                 let rect = ggez::graphics::Mesh::new_rectangle(
                     ctx,
                     ggez::graphics::DrawMode::stroke(3.0),
@@ -175,14 +175,14 @@ impl Drawable for map::Component {
                     },
                     _ => pt
                 };
-                let text = ggez::graphics::Text::new((*gate_type, assets.font, 16.0 * scale.x));
+                let text = ggez::graphics::Text::new((*gate_type, assets.font, 12.0 * scale.x));
                 draw(ctx, &text, pt)?;
 
                 Ok(())
             },
             map::Component::Empty { pos } => {
                 // debug view
-                if m.placeable_pos(*pos, None) {
+                if m.placeable_pos(*pos, None, &[], &[]) {
                     let (p, _, _) = get_default_drawparam(&ctx, &m, *pos, offset, assets.color_debug);
                     draw(ctx, &assets.redstone_dust_dot, p)?;
                 }
